@@ -1,0 +1,7 @@
+{
+  "name": "shell-lint",
+  "description": "The house-style lint for shell, awk, jq, markdown and yaml sources: the registry, discovery and runner, and every check, as a shellops consumer.",
+  "linear-team": "OPS",
+  "org": "creature-workshop",
+  "repo": "shell-lint"
+}

@@ -1,0 +1,8 @@
+# Fixture: a template with a spec block that declares no inputs.
+spec:
+  description: what this template takes is anybody's guess
+---
+"ksoft/shell/lint":
+  extends: .base
+  script:
+    - echo hi

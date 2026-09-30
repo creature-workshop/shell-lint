@@ -1,0 +1,14 @@
+# Fixture: the base template of a catalog. It declares spec.inputs, and it is
+# the one template allowed a before_script -- the hidden job every member
+# extends is where the bootstrap belongs.
+spec:
+  inputs:
+    image:
+      default: ubuntu:22.04
+      description: Container image to run in.
+---
+.base:
+  image: $[[ inputs.image ]]
+  before_script:
+    - apt-get update -qq
+    - ./cli/fingerprint-env
