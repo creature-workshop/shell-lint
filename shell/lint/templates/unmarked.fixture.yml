@@ -1,0 +1,18 @@
+# Fixture: a check member whose merge-request rule names no mark, so it runs
+# on every push to a merge request: the finding the job-lands-once check
+# exists for, unless the template is named as one every push runs.
+spec:
+  inputs:
+    job-name:
+      default: ksoft/shell/test
+      description: Name of the generated job.
+---
+"$[[ inputs.job-name ]]":
+  extends: .base
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - echo hi

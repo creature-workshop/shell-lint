@@ -1,0 +1,16 @@
+# Fixture: a member that redefines before_script, dropping the bootstrap for
+# its own job. Referencing the base job's list back in does not change that the
+# key is the member's now.
+spec:
+  inputs:
+    job-name:
+      default: ksoft/shell/test
+      description: Name of the generated job.
+---
+"$[[ inputs.job-name ]]":
+  extends: .base
+  before_script:
+    - !reference [.base, before_script]
+    - echo one extra step
+  script:
+    - echo hi

@@ -1,0 +1,29 @@
+# Fixture: a clean member template that writes the word before_script in every
+# place it is not a job's own key -- an include's inputs, a quoted script
+# entry, a nested mapping under a script entry, a block scalar, and a heredoc
+# inside one. None of them is a finding.
+spec:
+  inputs:
+    job-name:
+      default: ksoft/shell/lint
+      description: Name of the generated job.
+---
+include:
+  - local: /templates/base/template.yml
+    inputs:
+      before_script: an input may be named anything
+"$[[ inputs.job-name ]]":
+  extends: .base
+  script:
+    - echo "before_script: quoted inside a script entry"
+    - before_script: a mapping under a script entry is not a job key
+    - |
+      cat <<'EOF' > generated.yml
+      before_script:
+        - echo written into another file
+      EOF
+    - cat <<EOF
+      before_script: text continuing a plain scalar
+      EOF
+  after_script:
+    - echo done

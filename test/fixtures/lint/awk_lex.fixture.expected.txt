@@ -1,0 +1,7 @@
+x = LLLLLLL CCCCCC
+y = a / b / c
+if (line ~ LLLLLL) { n++ }
+z = LLL / 2 CCC
+name = LLLLLLLLLLLLLLLLL
+last = total
+LLLLL { next }

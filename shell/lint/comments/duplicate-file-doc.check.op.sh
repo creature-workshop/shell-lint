@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+import "$SHELL_LINT_DIR/shell/lint/comments/api.sh"
+
+:<<'DOC'
+The duplicate-file-doc check: one lint check plugin. See shell/lint/registry.sh
+for what the roles mean.
+DOC
+@check.duplicate-file-doc() {
+  @summary() {
+    println "An entrypoint's usage is its file doc; it does not also carry a doc block above the code."
+  }
+
+  @languages() {
+    @arr shell
+  }
+
+  @scopes() {
+    @arr code
+  }
+
+  @hint() {
+    println \
+      "Delete the top-of-file doc block; the usage already is the file doc."
+  }
+
+  @run() {
+    lint__comments__comment_lint_no_duplicate_file_doc "$@"
+  }
+}

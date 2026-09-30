@@ -1,0 +1,19 @@
+# Fixture: a check member whose merge-request rule names the landing mark, so
+# it runs in the landing run alone. The schedule arm is withdrawn by
+# `when: never`, and the default-branch arm admits no merge request, so neither
+# is a finding under the job-lands-once check.
+spec:
+  inputs:
+    job-name:
+      default: ksoft/shell/lint
+      description: Name of the generated job.
+---
+"$[[ inputs.job-name ]]":
+  extends: .base
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_LABELS =~ /(^|,)scheduler\/next-merge(,|$)/
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - echo hi
