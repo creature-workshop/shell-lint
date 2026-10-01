@@ -182,7 +182,8 @@ FIX
 }
 
 @test "lint__discover_tracked: the shellops index includes the cli entrypoints and no vendored test library" {
-  PROJ="$SHELLOPS_DIR" run lint__discover_tracked "$(lint__config_load "$SHELLOPS_DIR/lint.json")"
+  __config="$(PROJ="$SHELLOPS_DIR" lint__config__load)"
+  PROJ="$SHELLOPS_DIR" run lint__discover_tracked "$__config"
   assert_success
   assert_output --partial "/cli/install"
   refute_output --partial "/test/lib/"

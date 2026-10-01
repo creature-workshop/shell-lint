@@ -31,7 +31,7 @@ repository root.
   lint__checks__templates__glob "$(@obj)"  ->  templates/*/template.yml
 PUB_FUN
 lint__checks__templates__glob() {
-  lint__config_templates_glob "$(__lint__checks__templates__config "$1")"
+  lint__config__templates_glob "$(__lint__checks__templates__config "$1")"
 }
 
 : <<'PUB_FUN'
@@ -39,7 +39,7 @@ Prints the base template's path from <opts>.config, relative to the
 repository root, or nothing when lint.json names none.
 PUB_FUN
 lint__checks__templates__base() {
-  lint__config_templates_base "$(__lint__checks__templates__config "$1")"
+  lint__config__templates_base "$(__lint__checks__templates__config "$1")"
 }
 
 : <<'PUB_FUN'
@@ -47,7 +47,7 @@ Prints the landing mark from <opts>.config, spelled as the templates' rules
 spell it, or nothing when lint.json names none.
 PUB_FUN
 lint__checks__templates__mark() {
-  lint__config_templates_mark "$(__lint__checks__templates__config "$1")"
+  lint__config__templates_mark "$(__lint__checks__templates__config "$1")"
 }
 
 : <<'PUB_FUN'
@@ -55,7 +55,7 @@ Prints the templates <opts>.config lists as running on every push, as a
 struct array of paths relative to the repository root.
 PUB_FUN
 lint__checks__templates__every_push() {
-  lint__config_templates_every_push "$(__lint__checks__templates__config "$1")"
+  lint__config__templates_every_push "$(__lint__checks__templates__config "$1")"
 }
 
 : <<'FUN'

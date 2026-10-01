@@ -5,7 +5,7 @@
 #     -f scan.awk -f library_root.awk -f <check>.awk
 #
 # library_roots is the repository's list, relative to its root and space
-# separated, as lint__config_library_roots prints it: scripts/, shell/ and
+# separated, as lint__config__library_roots prints it: scripts/, shell/ and
 # src/, the homes a consumer keeps its shell in, lib/ and interpreter/ for
 # shellops itself, or whatever lint.json names (ADR 000045). A key is a
 # file's path under the repository root, as library_key spells it.

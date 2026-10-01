@@ -29,7 +29,7 @@ relative to the repository root.
   lint__checks__adrs__folder "$(@obj)"  ->  docs/decisions
 PUB_FUN
 lint__checks__adrs__folder() {
-  lint__config_decisions_folder "$(@get "$1" '.config' "$(@obj)")"
+  lint__config__decisions_folder "$(@get "$1" '.config' "$(@obj)")"
 }
 
 : <<'PUB_FUN'

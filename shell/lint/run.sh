@@ -34,13 +34,13 @@ lint__run() {
   __lint__run__listing="$3"
   __lint__run__added_only="$(@option "$1" added_only false)"
   __lint__run__config="$(@get "$1" '.config' "$(@obj)")"
-  __lint__run__deferred_checks="$(lint__config_added_only_checks "$__lint__run__config")"
+  __lint__run__deferred_checks="$(lint__config__added_only_checks "$__lint__run__config")"
   __lint__run__deferred="$(@join "$__lint__run__deferred_checks" ' ')"
 
   __lint__RUN_STATUS=0
   __lint__RUN_SKIPPED=""
 
-  @foreach __lint__run__one "$(lint__registry_names)"
+  @foreach __lint__run__one "$(lint__registry__names)"
 
   if @defined "$__lint__RUN_SKIPPED"; then
     log "ops lint: held to new lines only, per lint.json added_only:$__lint__RUN_SKIPPED"

@@ -26,8 +26,8 @@ __lint__checks__shell__indent__DIR="$SHELL_LINT_DIR/shell/lint/checks/shell/inde
 PUB_FUN
 lint__checks__shell__indent__run() {
   lint__checks__shell__indent__run__config="$(@get "$1" '.config' "$(@obj)")"
-  lint__checks__shell__indent__run__width="$(lint__config_indent_width "$lint__checks__shell__indent__run__config")"
-  lint__checks__shell__indent__run__tabs="$(lint__config_allow_tabs "$lint__checks__shell__indent__run__config")"
+  lint__checks__shell__indent__run__width="$(lint__config__indent_width "$lint__checks__shell__indent__run__config")"
+  lint__checks__shell__indent__run__tabs="$(lint__config__allow_tabs "$lint__checks__shell__indent__run__config")"
   lint__checks__shell__indent__run__allow_tabs="$(lint__awk_flag "$lint__checks__shell__indent__run__tabs")"
   shift
 

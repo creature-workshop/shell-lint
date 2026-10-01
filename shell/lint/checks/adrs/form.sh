@@ -44,10 +44,10 @@ lint__checks__adrs__form__check() {
   shift 2
 
   __lint__checks__adrs__form__check__words="$(
-    lint__config_decisions_page_words "$__lint__checks__adrs__form__check__config"
+    lint__config__decisions_page_words "$__lint__checks__adrs__form__check__config"
   )"
   __lint__checks__adrs__form__check__digits="$(
-    lint__config_decisions_number_digits "$__lint__checks__adrs__form__check__config"
+    lint__config__decisions_number_digits "$__lint__checks__adrs__form__check__config"
   )"
   __lint__checks__adrs__form__check__status=0
   for __lint__checks__adrs__form__check__file in "$@"; do
@@ -80,7 +80,7 @@ PUB_FUN
 lint__checks__adrs__form__is_named() {
   __lint__checks__adrs__form__is_named__config="$(@get "$1" '.config' "$(@obj)")"
   __lint__checks__adrs__form__is_named__form="$(
-    lint__config_decisions_form "$__lint__checks__adrs__form__is_named__config"
+    lint__config__decisions_form "$__lint__checks__adrs__form__is_named__config"
   )"
   @succeeds test "$__lint__checks__adrs__form__is_named__form" = one-page
 }

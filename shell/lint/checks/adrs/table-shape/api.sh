@@ -46,7 +46,7 @@ lint__checks__adrs__table_shape__run() {
   __lint__checks__adrs__table_shape__run__config="$(@get "$1" '.config' "$(@obj)")"
   __lint__checks__adrs__table_shape__run__folder="$(lint__checks__adrs__folder "$1")"
   __lint__checks__adrs__table_shape__run__words="$(
-    lint__config_decisions_page_words "$__lint__checks__adrs__table_shape__run__config"
+    lint__config__decisions_page_words "$__lint__checks__adrs__table_shape__run__config"
   )"
   shift
 

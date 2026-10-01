@@ -20,7 +20,7 @@ is private, and one that begins with @ is a role.
 Usage: lint__checks__shell__public_name__run <opts> <files...>
 PUB_FUN
 lint__checks__shell__public_name__run() {
-  __lint__checks__shell__public_name__run__roots="$(@join "$(lint__config_library_roots "$(@get "$1" '.config' "$(@obj)")")" ' ')"
+  __lint__checks__shell__public_name__run__roots="$(@join "$(lint__config__library_roots "$(@get "$1" '.config' "$(@obj)")")" ' ')"
   shift
   __lint__checks__shell__public_name__run__hits="$(lint__call_with_existing __lint__checks__shell__public_name__run__scan "$@")"
   @defined "$__lint__checks__shell__public_name__run__hits" || return 0

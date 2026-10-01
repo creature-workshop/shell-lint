@@ -116,7 +116,7 @@ PUB_FUN
 lint__classify() {
   __lint__classify__language="$(lint__language "$1")"
   @defined "$__lint__classify__language" || return 0
-  @is_true "$(lint__registry_knows_language "$__lint__classify__language")" || return 0
+  @is_true "$(lint__registry__knows_language "$__lint__classify__language")" || return 0
 
   __lint__classify__rel="$(lint__rel_path "$1")"
   if @is_true "$(args__call_with_lines lint__is_test_path "$2" "$__lint__classify__rel")"; then
