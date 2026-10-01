@@ -13,9 +13,7 @@ setup() {
   BASE="$FIXTURES/base.fixture.yml"
   MEMBER="$FIXTURES/member.fixture.yml"
   NO_INPUTS="$FIXTURES/no_inputs.fixture.yml"
-  REDEFINES="$FIXTURES/redefines.fixture.yml"
   MARKED="$FIXTURES/marked.fixture.yml"
-  UNMARKED="$FIXTURES/unmarked.fixture.yml"
 }
 
 @test "lint__checks__templates__declares_inputs__run: passes templates that declare their inputs" {
