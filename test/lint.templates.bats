@@ -8,13 +8,6 @@ setup() {
   load helpers/template_options.bash
   source "$SHELL_LINT_DIR/shell/lint/checks/templates/api.sh"
   export PROJ="$SHELL_LINT_DIR"
-  FIXTURES="$SHELL_LINT_DIR/shell/lint/checks/templates"
-  BASE="$FIXTURES/base.fixture.yml"
-  MEMBER="$FIXTURES/member.fixture.yml"
-  NO_INPUTS="$FIXTURES/no_inputs.fixture.yml"
-  REDEFINES="$FIXTURES/redefines.fixture.yml"
-  MARKED="$FIXTURES/marked.fixture.yml"
-  UNMARKED="$FIXTURES/unmarked.fixture.yml"
 }
 
 @test "lint__checks__templates__glob: templates/*/template.yml when lint.json names no pattern" {

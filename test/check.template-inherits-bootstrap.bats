@@ -12,10 +12,7 @@ setup() {
   FIXTURES="$SHELL_LINT_DIR/shell/lint/checks/templates"
   BASE="$FIXTURES/base.fixture.yml"
   MEMBER="$FIXTURES/member.fixture.yml"
-  NO_INPUTS="$FIXTURES/no_inputs.fixture.yml"
   REDEFINES="$FIXTURES/redefines.fixture.yml"
-  MARKED="$FIXTURES/marked.fixture.yml"
-  UNMARKED="$FIXTURES/unmarked.fixture.yml"
 }
 
 @test "lint__checks__templates__inherits_bootstrap__run: passes a catalog whose only before_script is the base's" {
