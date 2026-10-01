@@ -5,13 +5,15 @@ setup() {
   source "$SHELL_LINT_DIR/shell/lint/checks.sh"
 }
 
-@test "lint__registry_names: every check plugin under lib, in sorted path order" {
+@test "lint__registry_names: every check folder here in sorted path order, then shellops' own checks" {
   run lint__registry_names
   assert_success
-  assert_equal "$(@len "$output")" "$(find "$SHELLOPS_DIR/lib" -name '*.check.op.sh' | wc -l)"
-  assert_equal "$(@get "$output" '.[0]')" awk-early-exit
-  assert_equal "$(@get "$output" '.[1]')" awk-style
-  assert_equal "$(@get "$output" '.[2]')" banner-comment
+  __own="$(find "$SHELL_LINT_DIR/shell/lint/checks" -name '*.check.op.sh' | wc -l)"
+  __shellops="$(find "$SHELLOPS_DIR/lib" -name '*.check.op.sh' | grep -vc '/lib/lint/')"
+  assert_equal "$(@len "$output")" "$((__own + __shellops))"
+  assert_equal "$(@get "$output" '.[0]')" adr-citations
+  assert_equal "$(@get "$output" '.[1]')" adr-number-is-unique
+  assert_equal "$(@get "$output" '.[2]')" adr-number-width
   assert_equal "$(@get "$output" '.[-1]')" string-tests
 }
 
@@ -160,7 +162,7 @@ setup() {
 }
 
 @test "lint__check_name_of: the filename without its directory and suffix" {
-  run lint__check_name_of shell/lint/comments/duplicate-file-doc.check.op.sh
+  run lint__check_name_of shell/lint/checks/shell/duplicate-file-doc/duplicate-file-doc.check.op.sh
   assert_output duplicate-file-doc
 }
 

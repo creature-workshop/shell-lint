@@ -156,7 +156,7 @@ FIX
   run "$SHELL_LINT_DIR/cli/lint" --check bogus --check indent --check nope
   assert_failure
   assert_output --partial "Unknown --check name: bogus, nope"
-  assert_output --partial "Expected one of: awk-early-exit awk-style banner-comment"
+  assert_output --partial "Expected one of: adr-citations adr-number-is-unique adr-number-width"
 }
 
 @test "cli: --check narrows to the checks named, repeatable" {
@@ -394,4 +394,86 @@ FIX
   run lint --check indent
   assert_failure
   assert_output --partial "lib/mod.sh:2:"
+}
+
+@test "cli: --check narrows to the one check named" {
+  __f="$(cli_fixture lib/tracked.sh <<'FIX'
+: <<'DOC'
+Reports whether the version parses.
+
+TODO(OPS-237): the builtin duplicates this.
+DOC
+is_valid() {
+  printf 'true\n'
+}
+FIX
+)"
+
+  run "$SHELL_LINT_DIR/cli/lint" --check backward-reference "$__f"
+  assert_success
+
+  run "$SHELL_LINT_DIR/cli/lint" --check doc-block-tracker "$__f"
+  assert_failure
+}
+
+@test "cli: with no --check, every check runs and each is reported" {
+  __f="$(cli_fixture lib/messy.sh <<'FIX'
+: <<'DOC'
+Reports whether the version parses, formerly "is_semver".
+
+TODO(OPS-237): the builtin duplicates this.
+DOC
+is_valid() {
+  printf 'true\n'
+}
+FIX
+)"
+
+  run "$SHELL_LINT_DIR/cli/lint" --check duplicate-file-doc --check oversized-doc-block --check backward-reference --check doc-block-tracker "$__f"
+  assert_failure
+  assert_output --partial "Comment prose describes what the code does now"
+  assert_output --partial "A doc block carries no TODO"
+}
+
+@test "cli: skips files that are not shell sources" {
+  __f="$(cli_fixture notes.md <<'FIX'
+A doc block opens with `: <<'DOC'`.
+FIX
+)"
+
+  run "$SHELL_LINT_DIR/cli/lint" --check duplicate-file-doc --check oversized-doc-block --check backward-reference --check doc-block-tracker "$__f"
+  assert_success
+  assert_output ""
+}
+
+@test "cli: skips test sources, which document themselves as cases" {
+  __f="$(cli_fixture test/some_helper.sh <<'FIX'
+: <<'DOC'
+Builds a fixture, formerly "make_file".
+DOC
+build() {
+  printf 'built\n'
+}
+FIX
+)"
+
+  run "$SHELL_LINT_DIR/cli/lint" --check duplicate-file-doc --check oversized-doc-block --check backward-reference --check doc-block-tracker "$__f"
+  assert_success
+  assert_output ""
+}
+
+@test "cli: skips a planning tree the same way it skips a test tree" {
+  __f="$(cli_fixture planning/proto.sh <<'FIX'
+: <<'DOC'
+Applies the labels a review earned.
+DOC
+build() {
+  printf 'built\n'
+}
+FIX
+)"
+
+  run "$SHELL_LINT_DIR/cli/lint" --check duplicate-file-doc --check oversized-doc-block --check backward-reference --check doc-block-tracker "$__f"
+  assert_success
+  assert_output ""
 }

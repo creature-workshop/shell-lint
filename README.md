@@ -15,15 +15,26 @@ this order, and a name keeps its first plugin: `shell/lint` here, shellops'
 `lib`, whose modules ship the checks that police them, and the directories
 the repository's `lint.json` lists under `checks`.
 
-A check is a plugin file, `<name>.check.op.sh`, and `shell/lint/registry.sh`
-says what it defines. A detector reads a file through the scanner of
+A check is a folder under `shell/lint/checks/<subject>/`, one per check,
+named for it, under the subject it reads: `adrs` for decision records,
+`awk` for awk programs, `shell` for shell sources, `templates` for CI
+component templates. The folder holds the plugin file `<name>.check.op.sh`,
+whose roles `shell/lint/registry.sh` describes, an `api.sh` whose run
+function the plugin calls, and the detector awk the run function loads.
+Adding a check is adding a folder. What the checks of a subject share is a
+module in the subject's folder, with the fixtures its tests read:
+`adrs/api.sh`, `form.sh` and `fixtures.sh`, `shell/comments.sh` for the
+ten doc-block checks, and `templates/api.sh`. The awk libraries a detector
+loads sit
+under `shell/lint/lib/`, the scanner among them coming from
 [shell-scan](../shell-scan), so every reader of a shell file draws the same
-boundaries; what the comment checks share about a doc block is
-`shell/lint/comments/doc_block.awk`.
+boundaries.
 
-The tests under `test/` cover each check and the CLI. `shell/.ops` and
-`shell/.scan` vendor shellops and shell-scan for this repository's own
-tests and lint, and for nothing else. A repository takes this lint at a
-pin.
+The tests under `test/` are one suite per check, `check.<name>.bats`, and
+one per part of the engine, `lint.<part>.bats`.
+
+`shell/.ops` and `shell/.scan` vendor shellops and shell-scan for this
+repository's own tests and lint, and for nothing else. A repository takes
+this lint at a pin.
 
 The work is tracked in Linear on the SILT project, from STRATA-231.
