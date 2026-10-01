@@ -11,7 +11,7 @@ setup() {
 
 classes() {
   awk \
-    -f "$SHELL_LINT_DIR/shell/lint/awk_lex.awk" \
+    -f "$SHELL_LINT_DIR/shell/lint/lib/awk_lex.awk" \
     -f "$FIXTURES/awk_lex_classes.awk" \
     "$FIXTURES/awk_lex.fixture.awk"
 }

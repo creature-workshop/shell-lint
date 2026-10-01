@@ -12,7 +12,7 @@ setup() {
 
 # The model's reading of one file, one line per record it classifies.
 scan() {
-  awk -f "$SHELL_SCAN_DIR/shell/scan/scan.awk" -f "$LINT/yaml_scan.awk" -f "$PROBE" "$1"
+  awk -f "$SHELL_SCAN_DIR/shell/scan/scan.awk" -f "$LINT/lib/yaml_scan.awk" -f "$PROBE" "$1"
 }
 
 @test "yaml_scan: a key beside a leaf key in the same sequence entry is a key, not the leaf's content" {
