@@ -5,8 +5,8 @@ setup() {
   source "$SHELL_LINT_DIR/shell/lint/checks.sh"
 }
 
-@test "lint__registry_names: every check folder here in sorted path order, then shellops' own checks" {
-  run lint__registry_names
+@test "lint__registry__names: every check folder here in sorted path order, then shellops' own checks" {
+  run lint__registry__names
   assert_success
   __own="$(find "$SHELL_LINT_DIR/shell/lint/checks" -name '*.check.op.sh' | wc -l)"
   __shellops="$(find "$SHELLOPS_DIR/lib" -name '*.check.op.sh' | grep -vc '/lib/lint/')"
@@ -29,7 +29,7 @@ setup() {
 
 @test "every registered check answers each contract role" {
   __missing=""
-  for __name in $(@join "$(lint__registry_names)" ' '); do
+  for __name in $(@join "$(lint__registry__names)" ' '); do
     for __role in run languages scopes summary hint; do
       command -v "$(lint__check_fn "$__name" "$__role")" > /dev/null 2>&1 \
         || __missing="$__missing $__name:$__role"
@@ -109,7 +109,7 @@ setup() {
 @test "lint__describe_checks: one line per check with its languages, scopes and rule" {
   run lint__describe_checks
   assert_success
-  assert_equal "${#lines[@]}" "$(@len "$(lint__registry_names)")"
+  assert_equal "${#lines[@]}" "$(@len "$(lint__registry__names)")"
   assert_line --regexp '^indent +shell +code, tests +Leading whitespace'
   assert_line --regexp '^raw-jq +shell +code +No raw jq'
 }
@@ -149,14 +149,14 @@ setup() {
     @scopes() { @arr code; }
     @run() { :; }
   }
-  __before="$(@len "$(lint__registry_names)")"
+  __before="$(@len "$(lint__registry__names)")"
 
   lint__load_check demo-load
   lint__load_check demo-load
 
   run lint__check_registered demo-load
   assert_output true
-  assert_equal "$(@len "$(lint__registry_names)")" "$((__before + 1))"
+  assert_equal "$(@len "$(lint__registry__names)")" "$((__before + 1))"
   run demo_load_languages
   assert_output '["awk"]'
 }

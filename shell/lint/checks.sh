@@ -60,7 +60,7 @@ load.
 Usage: lint__load_project_checks <config>
 PUB_FUN
 lint__load_project_checks() {
-  __lint__load_project_checks__roots="$(lint__config_check_roots "$1")"
+  __lint__load_project_checks__roots="$(lint__config__check_roots "$1")"
   @foreach __lint__checks__load_root "$__lint__load_project_checks__roots"
 }
 

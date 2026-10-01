@@ -42,7 +42,7 @@ Prints true when <language> is one a check may read (shell, awk, jq or
 markdown or yaml), false otherwise. The classifier names more languages than the
 linter reads, so the listing asks here before it lists a file.
 PUB_FUN
-lint__registry_knows_language() {
+lint__registry__knows_language() {
   case " $__lint__registry__LANGUAGES " in
     *" $1 "*) @true ;;
     *) @false ;;
@@ -194,7 +194,7 @@ __lint__registry__is_named() {
 Prints the names of every check on the list, as a struct array, in the order
 they run.
 PUB_FUN
-lint__registry_names() {
+lint__registry__names() {
   println "$__lint__registry__NAMES"
 }
 
