@@ -64,3 +64,16 @@ setup() {
   assert_output ""
 }
 
+
+@test "lint__checks__adrs__table_shape__run: reads many table files in one run and judges each on its own" {
+  __kept="$(lint__checks__adrs__fixture_table "$PROJ" adrs 000007-fragments kinds table)"
+  __bare="$(lint__checks__adrs__fixture_table "$PROJ" adrs 000007-fragments costs bare_table)"
+  __doubled="$(lint__checks__adrs__fixture_table "$PROJ" adrs 000008-later kinds two_tables)"
+
+  run lint__checks__adrs__table_shape__run "$ONE_PAGE" "$__kept" "$__bare" "$__doubled"
+  assert_failure
+  assert_line "$__bare:1: the title is an H1: \"# <the table's title>\""
+  assert_line "$__bare:1: the summary is followed by a \"## Glossary\" section"
+  assert_line "$__doubled:25: the glossary is followed by one table"
+  refute_line --partial "$__kept:"
+}

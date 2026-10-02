@@ -116,15 +116,15 @@ __lint__discovery__named_is_excluded() {
 }
 
 : <<'PUB_FUN'
-Prints, one per line, the paths in <listing> whose language is in <languages>
-and whose scope is in <scopes>. Both are struct arrays: what a check's
-@languages and @scopes roles return.
+Prints, one per line, the paths in <listing> whose language is one of the
+space-separated <languages> and whose scope is one of the space-separated
+<scopes>: the words the registry kept from a check's @languages and @scopes
+roles (lint__check_language_words, lint__check_scope_words).
 
 Usage: lint__files_for <listing> <languages> <scopes>
 PUB_FUN
 lint__files_for() {
-  println "$1" \
-    | __lint__discovery__select_lines "$(@join "$2" ' ')" "$(@join "$3" ' ')"
+  println "$1" | __lint__discovery__select_lines "$2" "$3"
 }
 
 : <<'FUN'

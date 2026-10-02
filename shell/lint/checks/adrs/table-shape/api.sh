@@ -50,48 +50,15 @@ lint__checks__adrs__table_shape__run() {
   )"
   shift
 
-  __lint__checks__adrs__table_shape__run_each \
-    "$__lint__checks__adrs__table_shape__run__folder" \
-    "$__lint__checks__adrs__table_shape__run__words" \
-    "$@"
-}
+  __lint__checks__adrs__table_shape__run__tables="$(
+    println "$@" | markdown__tables_among "$__lint__checks__adrs__table_shape__run__folder"
+  )"
+  @defined "$__lint__checks__adrs__table_shape__run__tables" || return 0
 
-: <<'FUN'
-Checks the shape of each table file among <files...> under <folder>, against
-a page of <words> words. A file that is not a table file is passed over.
-Returns 1 when any table file has a finding.
-
-Usage: __lint__checks__adrs__table_shape__run_each <folder> <words> <files...>
-FUN
-__lint__checks__adrs__table_shape__run_each() {
-  __lint__checks__adrs__table_shape__run_each__folder="$1"
-  __lint__checks__adrs__table_shape__run_each__words="$2"
-  shift 2
-
-  __lint__checks__adrs__table_shape__run_each__status=0
-  for __lint__checks__adrs__table_shape__run_each__file in "$@"; do
-    __lint__checks__adrs__table_shape__run_one \
-      "$__lint__checks__adrs__table_shape__run_each__folder" \
-      "$__lint__checks__adrs__table_shape__run_each__words" \
-      "$__lint__checks__adrs__table_shape__run_each__file" \
-      || __lint__checks__adrs__table_shape__run_each__status=1
-  done
-
-  return "$__lint__checks__adrs__table_shape__run_each__status"
-}
-
-: <<'FUN'
-Runs the detector over <file> when it is a table file under <folder>,
-against a page of <words> words, and sends what it prints to stderr. Any
-other file passes.
-
-Usage: __lint__checks__adrs__table_shape__run_one <folder> <words> <file>
-FUN
-__lint__checks__adrs__table_shape__run_one() {
-  @is_true "$(markdown__is_table "$3" "$1")" || return 0
-
-  lint__checks__adrs__awk "$__lint__checks__adrs__table_shape__DIR/adr_table_shape.awk" \
-    -v page_words="$2" \
-    "$3" \
+  args__call_with_lines \
+    lint__checks__adrs__awk \
+    "$__lint__checks__adrs__table_shape__run__tables" \
+    "$__lint__checks__adrs__table_shape__DIR/adr_table_shape.awk" \
+    -v page_words="$__lint__checks__adrs__table_shape__run__words" \
     >&2
 }

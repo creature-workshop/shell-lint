@@ -66,8 +66,8 @@ __lint__run__one() {
 
   __lint__run__one__files="$(lint__files_for \
     "$__lint__run__listing" \
-    "$(lint__check_languages "$__lint__run__one__name")" \
-    "$(lint__check_scopes "$__lint__run__one__name")"
+    "$(lint__check_language_words "$__lint__run__one__name")" \
+    "$(lint__check_scope_words "$__lint__run__one__name")"
   )"
   @defined "$__lint__run__one__files" || return 0
 

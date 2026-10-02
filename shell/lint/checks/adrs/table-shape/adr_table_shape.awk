@@ -2,9 +2,11 @@
 # on its first line, the table's title; a summary after it of a quarter to
 # half of the page the variable `page_words` gives; a "## Glossary" section;
 # and one table after the glossary. Fenced blocks in the summary are free.
-# Reads one table file, named on the command line. Exits 1 when there is a
-# finding. Loaded after lib/markdown/lines.awk, which says what a heading, a
-# fence and a table row are.
+# Reads every table file named on the command line, one awk for the whole
+# list; a file is judged when the next one opens, and the last in END. Exits
+# 1 when there is a finding in any of them. Loaded after
+# lib/markdown/lines.awk, which says what a heading, a fence and a table row
+# are.
 #
 #     a file opening on prose, 15 words of summary and no glossary, page_words=450
 #       ->  <file>:1: the title is an H1: "# <the table's title>"
@@ -13,8 +15,9 @@
 
 function main(line) {
   if (FNR == 1) {
+    judge()
+    begin_file(FILENAME)
     report_title(line)
-    part = "summary"
     return
   }
   if (part == "table" && !is_table_row(line)) {
@@ -37,10 +40,24 @@ function main(line) {
   }
 }
 
-function verdict() {
+# Starts reading the table file at `path`: in its summary, nothing seen yet.
+function begin_file(path) {
+  table = path
+  part = "summary"
+  words = 0
+  glossary_line = 0
+  tables_after_glossary = 0
+  extra_reported = 0
+  in_fence = 0
+}
+
+# Reports what the table file read so far is missing, when there is one.
+function judge() {
+  if (table == "") {
+    return
+  }
   report_summary()
   report_glossary()
-  return found
 }
 
 function quarter() {
@@ -71,7 +88,7 @@ function note_table_row() {
 }
 
 function report(line_number, why) {
-  printf "%s:%s: %s\n", FILENAME, line_number, why
+  printf "%s:%s: %s\n", table, line_number, why
   found = 1
 }
 
@@ -106,4 +123,4 @@ function report_extra_table() {
 }
 
     { main($0) }
-END { exit verdict() }
+END { judge(); exit found }

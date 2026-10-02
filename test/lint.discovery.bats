@@ -241,20 +241,20 @@ FIX
   assert_output --partial "$__outside"
 }
 
-@test "lint__files_for: the paths in the check's languages and scopes" {
+@test "lint__files_for: the paths in the check's languages and scopes, each a space-separated string" {
   __listing="$(printf 'shell\tcode\t/r/lib/x.sh\nshell\ttests\t/r/test/x.bats\nawk\tcode\t/r/lib/x.awk\njq\tcode\t/r/lib/x.jq')"
 
-  run lint__files_for "$__listing" '["shell"]' '["code"]'
+  run lint__files_for "$__listing" shell code
   assert_output "/r/lib/x.sh"
 
-  run lint__files_for "$__listing" '["shell"]' '["code","tests"]'
+  run lint__files_for "$__listing" shell "code tests"
   assert_line "/r/lib/x.sh"
   assert_line "/r/test/x.bats"
 
-  run lint__files_for "$__listing" '["shell"]' '["tests"]'
+  run lint__files_for "$__listing" shell tests
   assert_output "/r/test/x.bats"
 
-  run lint__files_for "$__listing" '["awk","jq"]' '["code"]'
+  run lint__files_for "$__listing" "awk jq" code
   assert_line "/r/lib/x.awk"
   assert_line "/r/lib/x.jq"
   refute_output --partial ".sh"
@@ -263,7 +263,7 @@ FIX
 @test "lint__files_for: keeps a path containing a space" {
   __listing="$(printf 'shell\tcode\t/r/has space.sh')"
 
-  run lint__files_for "$__listing" '["shell"]' '["code"]'
+  run lint__files_for "$__listing" shell code
   assert_output "/r/has space.sh"
 }
 

@@ -61,24 +61,12 @@ lint__checks__adrs__table_reference__run() {
 Reads paths on stdin and prints, once each and sorted, the record each path
 under <folder> belongs to: a record named adr.md is its own, and a table file
 belongs to the adr.md beside its tables directory. Other paths print nothing.
+One awk, record_of.awk, answers for the whole list.
 FUN
 __lint__checks__adrs__table_reference__records_of() {
-  while IFS= read -r __lint__checks__adrs__table_reference__records_of__path; do
-    __lint__checks__adrs__table_reference__record_of "$1" "$__lint__checks__adrs__table_reference__records_of__path"
-  done | LC_ALL=C sort -u
-}
-
-: <<'FUN'
-Prints the record <path> belongs to under <folder>: <path> itself when it is
-a record named adr.md, the adr.md beside its tables directory when it is a
-table file, nothing otherwise.
-FUN
-__lint__checks__adrs__table_reference__record_of() {
-  if @is_true "$(markdown__is_table "$2" "$1")"; then
-    printf '%s/adr.md\n' "${2%/tables/*}"
-  elif [ "${2##*/}" = adr.md ] && @is_true "$(markdown__is_record "$2" "$1")"; then
-    println "$2"
-  fi
+  lint__checks__adrs__awk "$__lint__checks__adrs__table_reference__DIR/record_of.awk" \
+    -v folder="$1" \
+    | LC_ALL=C sort -u
 }
 
 : <<'FUN'

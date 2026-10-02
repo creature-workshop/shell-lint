@@ -1,13 +1,17 @@
 # Prints one finding per citation of a decision record that is not written
 # ADR.<n>@<repository> as the text of a markdown link. Fenced examples are
-# passed over. Reads one record, named on the command line. Exits 1 when there
-# is a finding. Loaded after lib/markdown/lines.awk, which reads the fences.
+# passed over. Reads every record named on the command line, one awk for the
+# whole list. Exits 1 when there is a finding in any of them. Loaded after
+# lib/markdown/lines.awk, which reads the fences.
 #
 #     See [ADR.34@tool](https://...).   ->  nothing
 #     See ADR.34@tool.                   ->  "<file>:7: link the citation: ADR.34@tool"
 #     See tool ADR 34.                   ->  "<file>:7: cite as ADR.<n>@<repository>: tool ADR 34"
 
 function main(line) {
+  if (FNR == 1) {
+    in_fence = 0
+  }
   if (is_code_fence(line) || in_fence) {
     return
   }

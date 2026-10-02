@@ -47,3 +47,17 @@ setup() {
   assert_output ""
 }
 
+
+@test "lint__checks__adrs__shape__run: reads many records in one run and judges each on its own" {
+  __kept="$(lint__checks__adrs__fixture_one_page "$PROJ" adrs 000007-fragments one_page)"
+  __broken="$(lint__checks__adrs__fixture_one_page "$PROJ" adrs 000010-misshapen misshapen)"
+  __kept_again="$(lint__checks__adrs__fixture_one_page "$PROJ" adrs 000007-fragments-again one_page)"
+
+  run lint__checks__adrs__shape__run "$ONE_PAGE" "$__kept" "$__broken" "$__kept_again"
+  assert_failure
+  assert_line "$__broken:1: the title is \"# ADR.10: <the decision>\", the record's number"
+  assert_line "$__broken:1: the header has no \"- Date:\" line"
+  assert_line "$__broken:1: the sections are Context, Decision, Consequences, in that order"
+  refute_line --partial "$__kept:"
+  refute_line --partial "$__kept_again:"
+}
