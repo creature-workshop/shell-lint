@@ -1,6 +1,7 @@
 #!/bin/sh
 
 import \
+  "$SHELLOPS_DIR/lib/args/api.sh" \
   "$SHELL_LINT_DIR/shell/lint/api.sh" \
   "$SHELL_LINT_DIR/shell/lint/checks/adrs/api.sh" \
   "$SHELLOPS_DIR/lib/markdown/api.sh" \
@@ -29,10 +30,13 @@ every one of them passes every file.
 FRAGMENT
 
 : <<'PUB_FUN'
-Runs the awk program at the path <program> over each of <files...> that is
-a decision record, when <opts>.config names the one-page form, and sends
-what it prints to stderr. Returns 1 when the program found anything in any
-record. A form check's run role calls this with its own detector.
+Runs the awk program at the path <program> once over every one of
+<files...> that is a decision record, when <opts>.config names the one-page
+form, and sends what it prints to stderr. One awk picks the records out of
+<files...> and one runs the program, however many records there are.
+Returns 1 when the program found anything in any record, 0 when it found
+nothing or there was no record to read. A form check's run role calls this
+with its own detector.
 
 Usage: lint__checks__adrs__form__check <program> <opts> <files...>
 PUB_FUN
@@ -43,29 +47,24 @@ lint__checks__adrs__form__check() {
   @is_true "$(lint__checks__adrs__form__is_named "$2")" || return 0
   shift 2
 
+  __lint__checks__adrs__form__check__records="$(
+    println "$@" | markdown__records_among "$__lint__checks__adrs__form__check__folder"
+  )"
+  @defined "$__lint__checks__adrs__form__check__records" || return 0
+
   __lint__checks__adrs__form__check__words="$(
     lint__config__decisions_page_words "$__lint__checks__adrs__form__check__config"
   )"
   __lint__checks__adrs__form__check__digits="$(
     lint__config__decisions_number_digits "$__lint__checks__adrs__form__check__config"
   )"
-  __lint__checks__adrs__form__check__status=0
-  for __lint__checks__adrs__form__check__file in "$@"; do
-    __lint__checks__adrs__form__check__record="$(markdown__is_record \
-      "$__lint__checks__adrs__form__check__file" \
-      "$__lint__checks__adrs__form__check__folder"
-    )"
-    @is_true "$__lint__checks__adrs__form__check__record" || continue
-
-    lint__checks__adrs__awk "$__lint__checks__adrs__form__check__program" \
-      -v page_words="$__lint__checks__adrs__form__check__words" \
-      -v number_digits="$__lint__checks__adrs__form__check__digits" \
-      "$__lint__checks__adrs__form__check__file" \
-      >&2 \
-      || __lint__checks__adrs__form__check__status=1
-  done
-
-  return "$__lint__checks__adrs__form__check__status"
+  args__call_with_lines \
+    lint__checks__adrs__awk \
+    "$__lint__checks__adrs__form__check__records" \
+    "$__lint__checks__adrs__form__check__program" \
+    -v page_words="$__lint__checks__adrs__form__check__words" \
+    -v number_digits="$__lint__checks__adrs__form__check__digits" \
+    >&2
 }
 
 : <<'PUB_FUN'

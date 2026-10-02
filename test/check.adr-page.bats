@@ -29,3 +29,16 @@ setup() {
   assert_output "$__record:1: 41 words of prose; a page is 20"
 }
 
+
+@test "lint__checks__adrs__page__run: counts each record from its own Context heading when it reads many in one run" {
+  __first="$(lint__checks__adrs__fixture_one_page "$PROJ" adrs 000007-fragments one_page)"
+  __second="$(lint__checks__adrs__fixture_one_page "$PROJ" adrs 000008-an-earlier-one superseded)"
+  __third="$(lint__checks__adrs__fixture_one_page "$PROJ" adrs 000007-fragments-again one_page)"
+  __opts="$(@set "$ONE_PAGE" '.config.decisions.page_words' 20)"
+
+  run lint__checks__adrs__page__run "$__opts" "$__first" "$__second" "$__third"
+  assert_failure
+  assert_output "$__first:1: 41 words of prose; a page is 20
+$__second:1: 41 words of prose; a page is 20
+$__third:1: 41 words of prose; a page is 20"
+}

@@ -1,8 +1,10 @@
-# Prints a finding for a decision record whose number is not written with
+# Prints a finding for each decision record whose number is not written with
 # `number_digits` digits, zeros in front. Records sort by name, and a folder
 # that pads some numbers to four digits and others to six sorts wrongly and
-# reads as two series. Reads one record, named on the command line. Exits 1
-# when there is a finding. Loaded after lib/markdown/records.awk.
+# reads as two series. Reads every record named on the command line, one awk
+# for the whole list, and looks at each one's name on its first line. Exits 1
+# when there is a finding in any of them. Loaded after
+# lib/markdown/records.awk.
 #
 #     adrs/0007-fragments/adr.md, number_digits=6
 #       ->  adrs/0007-fragments/adr.md:1: the record's number is written with 6 digits: 000007

@@ -29,6 +29,12 @@ named <prefix>_<role>, where <prefix> is the check name with dashes turned to
 underscores (doc-comment -> doc_comment_run), checks that all five exist and
 that @languages and @scopes only use the words above, and adds the name to the
 list. The list is the order checks run in and the order --list prints.
+
+The words of @languages and @scopes never change after load, so registration
+reads each role once and keeps its words as a space-separated string beside
+the name. The run (lint__files_for) and --list read the strings, through
+lint__check_language_words and lint__check_scope_words, and start no process
+for them. The roles themselves stay as they are, so a plugin does not change.
 FRAGMENT
 
 __lint__registry__CONTRACT="run languages scopes summary hint"
@@ -36,6 +42,9 @@ __lint__registry__LANGUAGES="shell awk jq markdown yaml"
 __lint__registry__SCOPES="code tests"
 
 __lint__registry__NAMES="${__lint__registry__NAMES:-$(@arr)}"
+
+# CONST: The same names as one space-separated string, so a membership test is a case statement and starts no process.
+__lint__registry__WORDS="${__lint__registry__WORDS:-}"
 
 : <<'PUB_FUN'
 Prints true when <language> is one a check may read (shell, awk, jq or
@@ -101,8 +110,10 @@ lint__load_check() {
 
 : <<'PUB_FUN'
 Adds the check <name> to the list, after checking its plain role functions
-exist and its @languages and @scopes use only known words. Fails, naming
-every problem, when they do not.
+exist and its @languages and @scopes use only known words. Reads those two
+roles once, here, and keeps their words beside the name for
+lint__check_language_words and lint__check_scope_words. Fails, naming every
+problem, when a role is missing or a word is unknown.
 
 Usage: lint__register_check <name>
 PUB_FUN
@@ -113,13 +124,65 @@ lint__register_check() {
     return 1
   fi
 
-  __lint__register_check__unknown="$(__lint__registry__unknown_words "$1")"
+  __lint__register_check__languages="$(@join "$(lint__check_languages "$1")" ' ')"
+  __lint__register_check__scopes="$(@join "$(lint__check_scopes "$1")" ' ')"
+  __lint__register_check__unknown="$(__lint__registry__unknown_words \
+    "$__lint__register_check__languages" \
+    "$__lint__register_check__scopes"
+  )"
   if @defined "$__lint__register_check__unknown"; then
     error "lint__register_check: check '$1' uses unknown $__lint__register_check__unknown"
     return 1
   fi
 
   __lint__registry__NAMES="$(@push "$__lint__registry__NAMES" "$1")"
+  __lint__registry__WORDS="${__lint__registry__WORDS:+$__lint__registry__WORDS }$1"
+  __lint__registry__keep_words "$1" \
+    "$__lint__register_check__languages" \
+    "$__lint__register_check__scopes"
+}
+
+: <<'FUN'
+Keeps the check <name>'s language and scope words, each a space-separated
+string, in a variable named for the check's prefix:
+__lint__registry__LANGUAGE_WORDS__<prefix> and
+__lint__registry__SCOPE_WORDS__<prefix>. The readers below eval the same
+names back.
+
+Usage: __lint__registry__keep_words <name> <language words> <scope words>
+FUN
+__lint__registry__keep_words() {
+  __lint__registry__keep_words__prefix="$(lint__check_prefix "$1")"
+  eval "__lint__registry__LANGUAGE_WORDS__$__lint__registry__keep_words__prefix=\$2"
+  eval "__lint__registry__SCOPE_WORDS__$__lint__registry__keep_words__prefix=\$3"
+}
+
+: <<'PUB_FUN'
+Prints the check <name>'s languages as one space-separated string, as
+registration read them from its @languages role. Starts no process. Prints
+nothing for a check that is not registered.
+
+    lint__check_language_words banner-comment  ->  shell awk jq
+
+Usage: lint__check_language_words <name>
+PUB_FUN
+lint__check_language_words() {
+  __lint__check_language_words__prefix="$(lint__check_prefix "$1")"
+  eval "println \"\${__lint__registry__LANGUAGE_WORDS__$__lint__check_language_words__prefix:-}\""
+}
+
+: <<'PUB_FUN'
+Prints the check <name>'s scopes as one space-separated string, as
+registration read them from its @scopes role. Starts no process. Prints
+nothing for a check that is not registered.
+
+    lint__check_scope_words indent  ->  code tests
+
+Usage: lint__check_scope_words <name>
+PUB_FUN
+lint__check_scope_words() {
+  __lint__check_scope_words__prefix="$(lint__check_prefix "$1")"
+  eval "println \"\${__lint__registry__SCOPE_WORDS__$__lint__check_scope_words__prefix:-}\""
 }
 
 : <<'FUN'
@@ -139,15 +202,17 @@ __lint__registry__missing_roles() {
 }
 
 : <<'FUN'
-Prints the words in the check <name>'s @languages and @scopes that the
-registry does not know, as "language(s): x, y; scope(s): z". Prints nothing
-when every word is known.
+Prints the words among a check's space-separated <language words> and <scope
+words> that the registry does not know, as "language(s): x, y; scope(s): z".
+Prints nothing when every word is known.
+
+Usage: __lint__registry__unknown_words <language words> <scope words>
 FUN
 __lint__registry__unknown_words() {
   __lint__registry__unknown_words__languages="$(__lint__registry__unknown_in \
-    "$(lint__check_languages "$1")" "$__lint__registry__LANGUAGES")"
+    "$1" "$__lint__registry__LANGUAGES")"
   __lint__registry__unknown_words__scopes="$(__lint__registry__unknown_in \
-    "$(lint__check_scopes "$1")" "$__lint__registry__SCOPES")"
+    "$2" "$__lint__registry__SCOPES")"
 
   __lint__registry__unknown_words__out=""
   if @defined "$__lint__registry__unknown_words__languages"; then
@@ -161,12 +226,12 @@ __lint__registry__unknown_words() {
 }
 
 : <<'FUN'
-Prints the words in the struct array <words> that are not among the
-space-separated <known>, comma-separated. Prints nothing when all are known.
+Prints the space-separated <words> that are not among the space-separated
+<known>, comma-separated. Prints nothing when all are known.
 FUN
 __lint__registry__unknown_in() {
   __lint__registry__unknown_in__out=""
-  for __lint__registry__unknown_in__word in $(@join "$1" ' '); do
+  for __lint__registry__unknown_in__word in $1; do
     case " $2 " in
       *" $__lint__registry__unknown_in__word "*) ;;
       *) __lint__registry__unknown_in__out="$__lint__registry__unknown_in__out, $__lint__registry__unknown_in__word" ;;
@@ -180,14 +245,10 @@ __lint__registry__unknown_in() {
 Prints true when a check named <name> is on the list, false otherwise.
 PUB_FUN
 lint__check_registered() {
-  @succeeds [ "$(@find __lint__registry__is_named "$__lint__registry__NAMES" "$1")" != null ]
-}
-
-: <<'FUN'
-@find callback: succeeds when the wrapped <element> is the name <target>.
-FUN
-__lint__registry__is_named() {
-  [ "$(@unwrap "$1")" = "$2" ]
+  case " $__lint__registry__WORDS " in
+    *" $1 "*) @true ;;
+    *) @false ;;
+  esac
 }
 
 : <<'PUB_FUN'
@@ -297,13 +358,28 @@ lint__describe_checks() {
 }
 
 : <<'FUN'
-@foreach callback: prints the --list line for the wrapped check <name>.
+@foreach callback: prints the --list line for the wrapped check <name>, its
+languages and scopes read from the words registration kept.
 FUN
 __lint__registry__describe() {
   __lint__registry__describe__name="$(@unwrap "$1")"
   printf '%-20s %-16s %-12s %s\n' \
     "$__lint__registry__describe__name" \
-    "$(@join "$(lint__check_languages "$__lint__registry__describe__name")" ', ')" \
-    "$(@join "$(lint__check_scopes "$__lint__registry__describe__name")" ', ')" \
+    "$(__lint__registry__comma_list "$(lint__check_language_words "$__lint__registry__describe__name")")" \
+    "$(__lint__registry__comma_list "$(lint__check_scope_words "$__lint__registry__describe__name")")" \
     "$(lint__check_summary "$__lint__registry__describe__name")"
+}
+
+: <<'FUN'
+Prints the space-separated <words> joined with ", ", starting no process.
+
+    __lint__registry__comma_list "shell awk jq"  ->  shell, awk, jq
+FUN
+__lint__registry__comma_list() {
+  __lint__registry__comma_list__out=""
+  for __lint__registry__comma_list__word in $1; do
+    __lint__registry__comma_list__out="$__lint__registry__comma_list__out, $__lint__registry__comma_list__word"
+  done
+
+  println "${__lint__registry__comma_list__out#, }"
 }

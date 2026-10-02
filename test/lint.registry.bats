@@ -83,6 +83,32 @@ setup() {
   assert_output --partial "Reindent the flagged lines"
 }
 
+@test "lint__check_language_words, lint__check_scope_words: the words registration kept, space-separated, and nothing for a stranger" {
+  assert_equal "$(lint__check_language_words banner-comment)" "$(@join "$(lint__check_languages banner-comment)" ' ')"
+  assert_equal "$(lint__check_scope_words indent)" "code tests"
+  assert_equal "$(lint__check_scope_words raw-jq)" "code"
+  assert_equal "$(lint__check_language_words bogus)" ""
+}
+
+@test "lint__register_check: reads @languages and @scopes once, at registration" {
+  counted_run() { :; }
+  counted_summary() { printf 'Counted.\n'; }
+  counted_hint() { printf 'Count it.\n'; }
+  counted_languages() { printf '%s\n' "$BATS_TEST_TMPDIR/counted" >> "$BATS_TEST_TMPDIR/reads"; @arr shell awk; }
+  counted_scopes() { @arr tests; }
+
+  lint__register_check counted
+  lint__check_language_words counted >/dev/null
+  lint__check_scope_words counted >/dev/null
+  lint__describe_checks >/dev/null
+
+  assert_equal "$(wc -l < "$BATS_TEST_TMPDIR/reads")" 1
+  assert_equal "$(lint__check_language_words counted)" "shell awk"
+  assert_equal "$(lint__check_scope_words counted)" "tests"
+  run lint__describe_checks
+  assert_line --regexp '^counted +shell, awk +tests +Counted\.'
+}
+
 @test "lint__check_verdict: the summary as the error headline, then the hint as HINT lines" {
   run lint__check_verdict raw-jq
   assert_line --index 0 --regexp '^ERROR: No raw jq or opx'
