@@ -92,11 +92,13 @@ __lint__config__has_shellops_module() {
 
 : <<'FUN'
 Prints the lint declaration as shellops' config module reads it, or
-nothing when that module finds none.
+nothing when that module finds none. The module hands a legacy lint.json
+over as it is, so one that is not JSON is refused here, naming it.
 FUN
 __lint__config__load_through_shellops() {
   @is_true "$(self__config__present lint)" || return 0
-  self__config__load lint
+  __lint__config__load_through_shellops__json="$(self__config__load lint)" || return 1
+  __lint__config__parsed "$__lint__config__load_through_shellops__json" "$PROJ/$__lint__config__LEGACY"
 }
 
 : <<'FUN'
@@ -105,11 +107,23 @@ does not parse as JSON.
 FUN
 __lint__config__read_json() {
   __lint__config__read_json__json="$(cat "$1")" || return 1
-  if ! @is_valid "$__lint__config__read_json__json"; then
-    error "$1 does not read as JSON"
+  __lint__config__parsed "$__lint__config__read_json__json" "$1"
+}
+
+: <<'FUN'
+Prints <json> when it parses as JSON. Fails, naming <file>, when it does
+not.
+
+args:
+  $1  The text read from the file
+  $2  The file it was read from
+FUN
+__lint__config__parsed() {
+  if ! @is_valid "$1"; then
+    error "$2 does not read as JSON"
     return 1
   fi
-  println "$__lint__config__read_json__json"
+  println "$1"
 }
 
 : <<'FUN'
