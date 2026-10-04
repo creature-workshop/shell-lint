@@ -9,7 +9,11 @@
 # and one underscore, lint__config_load or __lint__config_load__file, spells
 # the stem as a word of the next segment instead, and this check reports
 # it. A public name, a private name and a variable are judged alike,
-# wherever a line uses them. A dash in the stem reads as an underscore.
+# wherever a line uses them, except a variable that carries the name of a
+# function the file defines, __<function>__<name>: the naming rule gives a
+# function's variables its name, so the function's line is where the
+# finding is, and a function kept under the mark keeps its variables too.
+# A dash in the stem reads as an underscore.
 #
 # A file with no stem to judge is left alone: the barrel api.sh, a plugin
 # (.op.sh), a file that sits in a library root itself, whose stem is the
@@ -58,8 +62,36 @@ function misspells_stem(name) {
   return (after_module_path(name) ~ ("^" stem "_[^_]"))
 }
 
-# Reports NAME when it spells the stem with one underscore.
+# True when NAME is a variable of a function the file has defined so far:
+# it begins with __, the function's name and __.
+function carries_function_name(name, __function) {
+  for (__function in functions) {
+    if (index(name, "__" __function "__") == 1) {
+      return 1
+    }
+  }
+  return 0
+}
+
+# Records the function LINE defines, when it defines one, so the names
+# that carry it are judged through it.
+function record_function(line, __name) {
+  if (!is_func_def(line)) {
+    return
+  }
+  __name = line
+  sub(/^[ \t]*function[ \t]+/, "", __name)
+  sub(/[ \t]*\(.*$/, "", __name)
+  functions[__name] = 1
+}
+
+# Reports NAME when it spells the stem with one underscore, unless it is a
+# variable of a function the file defines, which is judged through its
+# function.
 function judge_name(name) {
+  if (carries_function_name(name)) {
+    return
+  }
   if (misspells_stem(name)) {
     note(FNR, "name " name " spells " stem ", its file, with one underscore; the file is a segment, so the name begins " prefix stem "__")
   }
@@ -89,6 +121,7 @@ function judge_line(line, __rest, __name) {
 # Resets to the state a fresh file starts in.
 function begin_file(__key) {
   in_heredoc = 0
+  split("", functions)
   __key = library_key(FILENAME)
   prefix = public_prefix(__key)
   stem = file_stem(__key)
@@ -101,9 +134,11 @@ function read_heredoc(line) {
   }
 }
 
-# Reads one line of code.
+# Reads one line of code: judged, then its function recorded, so the
+# function's own line is judged and the lines of its body know it.
 function read_line(line) {
   judge_line(line)
+  record_function(line)
   if (opens_heredoc(line)) {
     in_heredoc = 1
   }
