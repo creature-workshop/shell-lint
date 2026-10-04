@@ -261,6 +261,16 @@ lint__config__added_only_checks() {
 }
 
 : <<'PUB_FUN'
+Prints the names of the checks that never run in this repository, as a
+struct array; empty by default. A check goes here when it polices an API
+the repository does not use, so its findings are not a backlog that new
+lines are held to: the check is left out of every run, and named.
+PUB_FUN
+lint__config__disabled_checks() {
+  @get "$1" '.disabled' "$(@arr)"
+}
+
+: <<'PUB_FUN'
 Prints the directory, relative to the repository root, that holds the
 repository's decision records; docs/decisions by default.
 PUB_FUN

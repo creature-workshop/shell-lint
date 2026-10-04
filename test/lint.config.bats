@@ -103,8 +103,8 @@ setup() {
   assert_failure
 }
 
-@test "config readers: width, tabs, test trees, excludes and added_only come from the config" {
-  __config='{"indent":{"width":4,"tabs":true},"tests":["spec"],"exclude":["planning","my dir"],"added_only":["raw-jq"]}'
+@test "config readers: width, tabs, test trees, excludes, added_only and disabled come from the config" {
+  __config='{"indent":{"width":4,"tabs":true},"tests":["spec"],"exclude":["planning","my dir"],"added_only":["raw-jq"],"disabled":["println"]}'
 
   run lint__config__indent_width "$__config"
   assert_output "4"
@@ -122,6 +122,9 @@ setup() {
 
   run lint__config__added_only_checks "$__config"
   assert_equal "$(@get "$output" '.[0]')" "raw-jq"
+
+  run lint__config__disabled_checks "$__config"
+  assert_equal "$(@get "$output" '.[0]')" "println"
 }
 
 @test "config readers: defaults apply when keys are absent" {
@@ -139,5 +142,8 @@ setup() {
   assert_equal "$(@len "$output")" 0
 
   run lint__config__added_only_checks '{}'
+  assert_equal "$(@len "$output")" 0
+
+  run lint__config__disabled_checks '{}'
   assert_equal "$(@len "$output")" 0
 }

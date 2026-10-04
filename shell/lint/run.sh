@@ -11,9 +11,10 @@ import \
 Running the checks over a listing of files.
 
 Every check runs and prints its findings before the verdict, so one run shows
-everything there is to fix. A check that lint.json holds to new lines only
-(`added_only`) is skipped in a full sweep and named once at the end, so nobody
-wonders where it went.
+everything there is to fix. A check the lint declaration holds to new lines
+only (`added_only`) is skipped in a full sweep, and a check it turns off
+(`disabled`) is skipped in every run; each kind is named once at the end, so
+nobody wonders where it went.
 MODULE
 
 : <<'PUB_FUN'
@@ -21,7 +22,8 @@ Runs the checks named in <selected> -- every check when it is empty -- over
 the files in <listing>. Each check gets <opts> and only the files it reads.
 When <opts>.added_only is true every check runs and only its findings on
 added lines count; otherwise the checks <opts>.config lists under
-`added_only` are skipped and named.
+`added_only` are skipped and named. The checks it lists under `disabled`
+are skipped and named in both cases.
 
 Returns 0 when every check that ran found nothing, 1 otherwise. Findings go to
 stderr as each check prints them.
@@ -36,17 +38,32 @@ lint__run() {
   __lint__run__config="$(@get "$1" '.config' "$(@obj)")"
   __lint__run__deferred_checks="$(lint__config__added_only_checks "$__lint__run__config")"
   __lint__run__deferred="$(@join "$__lint__run__deferred_checks" ' ')"
+  __lint__run__disabled_checks="$(lint__config__disabled_checks "$__lint__run__config")"
+  __lint__run__disabled="$(@join "$__lint__run__disabled_checks" ' ')"
 
   __lint__RUN_STATUS=0
   __lint__RUN_SKIPPED=""
+  __lint__RUN_DISABLED=""
 
   @foreach __lint__run__one "$(lint__registry__names)"
 
-  if @defined "$__lint__RUN_SKIPPED"; then
-    log "ops lint: held to new lines only, per lint.json added_only:$__lint__RUN_SKIPPED"
-  fi
+  __lint__run__name_left_out
 
   return "$__lint__RUN_STATUS"
+}
+
+: <<'FUN'
+Names the checks this run left out, one line for the checks held to new
+lines only and one for the checks the declaration turns off, each only when
+there are any.
+FUN
+__lint__run__name_left_out() {
+  if @defined "$__lint__RUN_SKIPPED"; then
+    log "ops lint: held to new lines only, per the lint declaration's added_only:$__lint__RUN_SKIPPED"
+  fi
+  if @defined "$__lint__RUN_DISABLED"; then
+    log "ops lint: turned off, per the lint declaration's disabled:$__lint__RUN_DISABLED"
+  fi
 }
 
 : <<'FUN'
@@ -57,6 +74,10 @@ __lint__run__one() {
   __lint__run__one__name="$(@unwrap "$1")"
 
   if @is_false "$(__lint__run__is_selected "$__lint__run__one__name")"; then
+    return 0
+  fi
+  if @is_true "$(__lint__run__is_disabled "$__lint__run__one__name")"; then
+    __lint__RUN_DISABLED="$__lint__RUN_DISABLED $__lint__run__one__name"
     return 0
   fi
   if @is_true "$(__lint__run__is_deferred "$__lint__run__one__name")"; then
@@ -173,6 +194,17 @@ __lint__run__is_deferred() {
   fi
 
   case " $__lint__run__deferred " in
+    *" $1 "*) @true ;;
+    *) @false ;;
+  esac
+}
+
+: <<'FUN'
+Prints true when <name> is a check the lint declaration turns off, false
+otherwise.
+FUN
+__lint__run__is_disabled() {
+  case " $__lint__run__disabled " in
     *" $1 "*) @true ;;
     *) @false ;;
   esac
