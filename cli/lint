@@ -35,8 +35,10 @@ directory names, the directories no check looks in, under "checks" the
 directories the repository keeps its own checks under, under "added_only"
 the checks that run only with --added-only (use that for a check the code
 does not pass yet, so new lines are held to it while a full sweep leaves it
-out), and under "templates" which yaml files are CI component templates and
-what the template checks need to know about the catalog.
+out), under "disabled" the checks that never run (use that for a check that
+polices an API the repository does not use), and under "templates" which
+yaml files are CI component templates and what the template checks need to
+know about the catalog.
 
 Flags:
   --list          Print every check: its name, languages, scopes and rule.

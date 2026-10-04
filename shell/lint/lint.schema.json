@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://gitlab.creature-workshop.com/ksoft/shell-lint/shell/lint/lint.schema.json",
   "title": "Lint config",
-  "description": "Configuration for ops lint, read from $PROJ/lint.json: the indentation rules, the directories that mark a test tree, the paths no check visits, the checks held to new lines only, the directories the repository keeps its own checks under, where decision records live and the form they keep, and which files are component templates and what the template checks need to know about them.",
+  "description": "Configuration for ops lint, read from $PROJ/lint.json: the indentation rules, the directories that mark a test tree, the paths no check visits, the checks held to new lines only, the checks turned off, the directories the repository keeps its own checks under, where decision records live and the form they keep, and which files are component templates and what the template checks need to know about them.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -50,6 +50,12 @@
       "uniqueItems": true,
       "items": { "type": "string", "minLength": 1 },
       "description": "Names of registered checks that run only under --added-only. List a check here when its pre-existing findings are a tracked backlog: new lines are still held to it, while a full sweep leaves it out rather than failing on the backlog."
+    },
+    "disabled": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Names of registered checks that never run in this repository. List a check here when it polices an API the repository does not use, so its findings are not a backlog and will never be worked off; a run names the checks it left out."
     },
     "templates": {
       "type": "object",

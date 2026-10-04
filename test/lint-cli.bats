@@ -76,7 +76,27 @@ FIX
 
   run lint__run "$(@obj '.added_only' false '.config' '{"added_only":["raw-jq"]}')" "$(@arr)" "$__listing"
   assert_success
-  assert_output --partial "held to new lines only, per lint.json added_only: raw-jq"
+  assert_output --partial "held to new lines only, per the lint declaration's added_only: raw-jq"
+  refute_output --partial "Raw jq/opx"
+}
+
+@test "lint__run: a check the declaration turns off is skipped in every run and named once" {
+  __f="$(project_file lib/raw.sh <<'FIX'
+raw__read_name() {
+  printf '%s' "$1" | jq -r '.name'
+}
+FIX
+)"
+  __listing="$(PROJ="$PROJ_DIR" lint__select_named '{}' "$__f")"
+
+  run lint__run "$(@obj '.added_only' false '.config' '{"disabled":["raw-jq"]}')" "$(@arr)" "$__listing"
+  assert_success
+  assert_output --partial "turned off, per the lint declaration's disabled: raw-jq"
+  refute_output --partial "Raw jq/opx"
+
+  run lint__run "$(@obj '.added_only' true '.config' '{"disabled":["raw-jq"]}')" "$(@arr)" "$__listing"
+  assert_success
+  assert_output --partial "turned off, per the lint declaration's disabled: raw-jq"
   refute_output --partial "Raw jq/opx"
 }
 
@@ -194,7 +214,7 @@ FIX
 
   run lint "$__f"
   assert_success
-  assert_output --partial "held to new lines only, per lint.json added_only: raw-jq"
+  assert_output --partial "held to new lines only, per the lint declaration's added_only: raw-jq"
 
   run lint --check raw-jq "$__f"
   assert_success
