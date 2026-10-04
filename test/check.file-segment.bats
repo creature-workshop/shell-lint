@@ -14,13 +14,16 @@ setup() {
   SHELLOPS_ROOTS="$(@obj '.config' "$(@obj '.library_roots' "$(@arr lib interpreter)")")"
 }
 
-@test "lint__checks__shell__file_segment__run: a public name, a private name and a variable that spell the stem with one underscore are findings" {
+@test "lint__checks__shell__file_segment__run: a public name, a private name and a variable that spell the stem with one underscore are findings, and a function's variables are judged through the function" {
   run lint__checks__shell__file_segment__run "$SHELLOPS_ROOTS" "$ROOT/lib/testing/trace/latest.sh"
 
   assert_failure
   assert_output --partial "latest.sh:1: name testing__trace__latest_read spells latest, its file, with one underscore; the file is a segment, so the name begins testing__trace__latest__"
-  assert_output --partial "latest.sh:2: name __testing__trace__latest_read__map spells latest, its file, with one underscore"
-  assert_output --partial "latest.sh:3: name __testing__trace__latest_read__map spells latest, its file, with one underscore"
+  refute_output --partial "latest.sh:2:"
+  refute_output --partial "latest.sh:3:"
+  assert_output --partial "latest.sh:19: name __testing__trace__latest_total spells latest, its file, with one underscore"
+  refute_output --partial "latest.sh:20:"
+  refute_output --partial "latest.sh:21:"
   refute_output --partial "latest.sh:6:"
   refute_output --partial "latest.sh:7:"
   refute_output --partial "latest.sh:8:"
