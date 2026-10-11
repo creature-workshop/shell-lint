@@ -38,3 +38,5 @@ repository's own tests and lint, and for nothing else. A repository takes
 this lint at a pin.
 
 The work is tracked in Linear on the SILT project, from STRATA-231.
+
+shell-lint is licensed under the [Apache License, Version 2.0](LICENSE).
