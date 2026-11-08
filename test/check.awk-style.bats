@@ -14,7 +14,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at1
+  run lint__checks__awk__style__run "$at1" "$__f"
   assert_failure
   assert_output --partial "unbraced-if.awk:2:"
   assert_output --partial "unbraced if body"
@@ -28,7 +29,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at2
+  run lint__checks__awk__style__run "$at2" "$__f"
   assert_failure
   assert_output --partial "unbraced for body"
 }
@@ -41,7 +43,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at3
+  run lint__checks__awk__style__run "$at3" "$__f"
   assert_failure
   assert_output --partial "unbraced while body"
 }
@@ -57,7 +60,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at4
+  run lint__checks__awk__style__run "$at4" "$__f"
   assert_failure
   assert_output --partial "unbraced else body"
 }
@@ -72,7 +76,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at5
+  run lint__checks__awk__style__run "$at5" "$__f"
   assert_failure
   assert_output --partial "unbraced if body"
   refute_output --partial "unbraced else body"
@@ -86,7 +91,8 @@ function strip_html_comments(s,   at, rest) {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at6
+  run lint__checks__awk__style__run "$at6" "$__f"
   assert_failure
   assert_output --partial "wide-gap before parameter 'at'"
   assert_output --partial "local parameter 'rest' must be prefixed with __"
@@ -100,7 +106,8 @@ function f(line, __item, token) {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at7
+  run lint__checks__awk__style__run "$at7" "$__f"
   assert_failure
   assert_output --partial "local parameter 'token' must be prefixed with __"
 }
@@ -117,7 +124,8 @@ function bullet_reference(line, __item, __token) {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at8
+  run lint__checks__awk__style__run "$at8" "$__f"
   assert_success
   assert_output ""
 }
@@ -130,7 +138,8 @@ function note(line, msg) {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at9
+  run lint__checks__awk__style__run "$at9" "$__f"
   assert_success
   assert_output ""
 }
@@ -142,7 +151,8 @@ is_fence($0) { fenced = !fenced; next }
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at10
+  run lint__checks__awk__style__run "$at10" "$__f"
   assert_success
   assert_output ""
 }
@@ -163,7 +173,8 @@ function is_code_fence(line, __ch) {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at11
+  run lint__checks__awk__style__run "$at11" "$__f"
   assert_success
   assert_output ""
 }
@@ -179,7 +190,8 @@ $1 == "if (x) return" { print }
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at12
+  run lint__checks__awk__style__run "$at12" "$__f"
   assert_success
   assert_output ""
 }
@@ -195,19 +207,22 @@ function f(
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at13
+  run lint__checks__awk__style__run "$at13" "$__f"
   assert_success
   assert_output ""
 }
 
 @test "lint__checks__awk__style__run: accepts a clean first-party file" {
-  run lint__checks__awk__style__run "$(@obj)" "$SHELLOPS_DIR/lib/linear/normalize_closing_lists.awk"
+  @obj at14
+  run lint__checks__awk__style__run "$at14" "$SHELLOPS_DIR/lib/linear/normalize_closing_lists.awk"
   assert_success
   assert_output ""
 }
 
 @test "lint__checks__awk__style__run: the scanner is clean under its own rules" {
-  run lint__checks__awk__style__run "$(@obj)" "$SHELL_LINT_DIR/shell/lint/awk_style_scan.awk"
+  @obj at15
+  run lint__checks__awk__style__run "$at15" "$SHELL_LINT_DIR/shell/lint/awk_style_scan.awk"
   assert_success
   assert_output ""
 }
@@ -221,7 +236,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at16
+  run lint__checks__awk__style__run "$at16" "$__f"
   assert_failure
   assert_output --partial "unbraced if body"
   assert_output --partial "unbraced for body"
@@ -237,7 +253,8 @@ BEGIN { while (z) z-- }
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__a" "$__b"
+  @obj at17
+  run lint__checks__awk__style__run "$at17" "$__a" "$__b"
   assert_failure
   assert_output --partial "unbraced if body"
   assert_output --partial "unbraced while body"
@@ -251,7 +268,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at18
+  run lint__checks__awk__style__run "$at18" "$__f"
   assert_failure
   assert_output --partial "unbraced if body"
 }
@@ -266,7 +284,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at19
+  run lint__checks__awk__style__run "$at19" "$__f"
   assert_failure
   assert_output --partial "unbraced else body"
 }
@@ -283,7 +302,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at20
+  run lint__checks__awk__style__run "$at20" "$__f"
   assert_success
   assert_output ""
 }
@@ -298,7 +318,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at21
+  run lint__checks__awk__style__run "$at21" "$__f"
   assert_success
   assert_output ""
 }
@@ -313,7 +334,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at22
+  run lint__checks__awk__style__run "$at22" "$__f"
   refute_output --partial "unbraced do"
 }
 
@@ -325,7 +347,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at23
+  run lint__checks__awk__style__run "$at23" "$__f"
   assert_success
   assert_output ""
 }
@@ -338,7 +361,8 @@ function f(  item) {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at24
+  run lint__checks__awk__style__run "$at24" "$__f"
   assert_failure
   assert_output --partial "wide-gap before parameter 'item'"
 }
@@ -351,7 +375,8 @@ function f() {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at25
+  run lint__checks__awk__style__run "$at25" "$__f"
   assert_success
   assert_output ""
 }
@@ -366,7 +391,8 @@ function f(line, # locals
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at26
+  run lint__checks__awk__style__run "$at26" "$__f"
   assert_success
   assert_output ""
 }
@@ -382,7 +408,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at27
+  run lint__checks__awk__style__run "$at27" "$__f"
   assert_success
   assert_output ""
 }
@@ -395,7 +422,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at28
+  run lint__checks__awk__style__run "$at28" "$__f"
   assert_success
   assert_output ""
 }
@@ -408,7 +436,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at29
+  run lint__checks__awk__style__run "$at29" "$__f"
   assert_success
   assert_output ""
 }
@@ -423,7 +452,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at30
+  run lint__checks__awk__style__run "$at30" "$__f"
   assert_success
   assert_output ""
 }
@@ -482,7 +512,8 @@ function f(line,   __item) {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at31
+  run lint__checks__awk__style__run "$at31" "$__f"
   assert_failure
   assert_output --partial "wide-gap before parameter '__item'"
 }
@@ -496,7 +527,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at32
+  run lint__checks__awk__style__run "$at32" "$__f"
   assert_failure
   assert_output --partial "next-line-if.awk:2:"
   assert_output --partial "unbraced if body"
@@ -512,7 +544,8 @@ BEGIN {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at33
+  run lint__checks__awk__style__run "$at33" "$__f"
   assert_failure
   assert_output --partial "wrapped-condition.awk:2:"
   assert_output --partial "unbraced if body"
@@ -530,7 +563,8 @@ function format_all(line, __iffy) {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at34
+  run lint__checks__awk__style__run "$at34" "$__f"
   assert_success
   assert_output ""
 }
@@ -557,7 +591,8 @@ function g() {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__f"
+  @obj at35
+  run lint__checks__awk__style__run "$at35" "$__f"
   assert_failure
   assert_output --partial "lane.awk:5:"
   assert_output --partial "function below the rule at line 1"
@@ -597,6 +632,7 @@ function f() {
 FIX
 )"
 
-  run lint__checks__awk__style__run "$(@obj)" "$__a" "$__b" "$__c"
+  @obj at36
+  run lint__checks__awk__style__run "$at36" "$__a" "$__b" "$__c"
   assert_success
 }

@@ -25,7 +25,9 @@ module's.
 Usage: lint__checks__shell__private_name__run <opts> <files...>
 PUB_FUN
 lint__checks__shell__private_name__run() {
-  __lint__checks__shell__private_name__run__roots="$(@join "$(lint__config__library_roots "$(@get "$1" '.config' "$(@obj)")")" ' ')"
+  @obj __lint__checks__shell__private_name__run__obj_1
+  @get __lint__checks__shell__private_name__run__get_2 "$1" '.config' "$__lint__checks__shell__private_name__run__obj_1"
+  @join __lint__checks__shell__private_name__run__roots "$(lint__config__library_roots "$__lint__checks__shell__private_name__run__get_2")" ' '
   shift
   __lint__checks__shell__private_name__run__hits="$(lint__call_with_existing __lint__checks__shell__private_name__run__scan "$@")"
   @defined "$__lint__checks__shell__private_name__run__hits" || return 0

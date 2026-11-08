@@ -22,7 +22,9 @@ no stem to judge.
 Usage: lint__checks__shell__file_segment__run <opts> <files...>
 PUB_FUN
 lint__checks__shell__file_segment__run() {
-  __lint__checks__shell__file_segment__run__roots="$(@join "$(lint__config__library_roots "$(@get "$1" '.config' "$(@obj)")")" ' ')"
+  @obj __lint__checks__shell__file_segment__run__obj_1
+  @get __lint__checks__shell__file_segment__run__get_2 "$1" '.config' "$__lint__checks__shell__file_segment__run__obj_1"
+  @join __lint__checks__shell__file_segment__run__roots "$(lint__config__library_roots "$__lint__checks__shell__file_segment__run__get_2")" ' '
   shift
   __lint__checks__shell__file_segment__run__hits="$(lint__call_with_existing __lint__checks__shell__file_segment__run__scan "$@")"
   @defined "$__lint__checks__shell__file_segment__run__hits" || return 0

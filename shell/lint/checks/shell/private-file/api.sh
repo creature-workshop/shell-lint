@@ -20,7 +20,9 @@ Usage: lint__checks__shell__private_file__run <opts> <files...>
 The library roots come from the options' config, or the defaults.
 PUB_FUN
 lint__checks__shell__private_file__run() {
-  __lint__checks__shell__private_file__run__roots="$(@join "$(lint__config__library_roots "$(@get "$1" '.config' "$(@obj)")")" ' ')"
+  @obj __lint__checks__shell__private_file__run__obj_1
+  @get __lint__checks__shell__private_file__run__get_2 "$1" '.config' "$__lint__checks__shell__private_file__run__obj_1"
+  @join __lint__checks__shell__private_file__run__roots "$(lint__config__library_roots "$__lint__checks__shell__private_file__run__get_2")" ' '
   shift
   __lint__checks__shell__private_file__run__hits="$(lint__call_with_existing __lint__checks__shell__private_file__run__scan "$@")"
   @defined "$__lint__checks__shell__private_file__run__hits" || return 0

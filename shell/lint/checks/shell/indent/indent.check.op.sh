@@ -12,11 +12,13 @@ DOC
   }
 
   @languages() {
-    @arr shell
+    @arr __check_indent__out shell
+    println "$__check_indent__out"
   }
 
   @scopes() {
-    @arr code tests
+    @arr __check_indent__out code tests
+    println "$__check_indent__out"
   }
 
   @hint() {

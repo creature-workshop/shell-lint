@@ -27,8 +27,8 @@ Prints true when <path> has no newline and no tab in it, false otherwise.
 PUB_FUN
 lint__is_plain_path() {
   case "$1" in
-    *"$__lint__classify__NL"*|*"$__lint__classify__TAB"*) @false ;;
-    *) @true ;;
+    *"$__lint__classify__NL"*|*"$__lint__classify__TAB"*) @false __lint__is_plain_path__out; println "$__lint__is_plain_path__out" ;;
+    *) @true __lint__is_plain_path__out; println "$__lint__is_plain_path__out" ;;
   esac
 }
 
@@ -55,13 +55,15 @@ lint__is_test_path() {
   for __lint__is_test_path__tree in "$@"; do
     case "$__lint__is_test_path__path" in
       *"/$__lint__is_test_path__tree/"*)
-        @true
+        @true __lint__is_test_path__out
+        println "$__lint__is_test_path__out"
         return 0
         ;;
     esac
   done
 
-  @false
+  @false __lint__is_test_path__out
+  println "$__lint__is_test_path__out"
 }
 
 : <<'PUB_FUN'
@@ -78,13 +80,15 @@ lint__rel_is_excluded() {
   for __lint__rel_is_excluded__prefix in "$@"; do
     case "$__lint__rel_is_excluded__rel" in
       "$__lint__rel_is_excluded__prefix"|"$__lint__rel_is_excluded__prefix"/*)
-        @true
+        @true __lint__rel_is_excluded__out
+        println "$__lint__rel_is_excluded__out"
         return 0
         ;;
     esac
   done
 
-  @false
+  @false __lint__rel_is_excluded__out
+  println "$__lint__rel_is_excluded__out"
 }
 
 : <<'PUB_FUN'

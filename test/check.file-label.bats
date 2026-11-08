@@ -10,7 +10,9 @@ setup() {
   # The fixtures are shellops-shaped, under lib/ and interpreter/, and those
   # are library roots only when the options name them, as shellops' own
   # lint.json does.
-  SHELLOPS_ROOTS="$(@obj '.config' "$(@obj '.library_roots' "$(@arr lib interpreter)")")"
+  @arr __setup__arr_1 lib interpreter
+  @obj __setup__obj_2 '.library_roots' "$__setup__arr_1"
+  @obj SHELLOPS_ROOTS '.config' "$__setup__obj_2"
 }
 
 @test "file label: flags a library file doc that opens on DOC" {
@@ -340,7 +342,8 @@ thing__read() {
 FIX
 )"
 
-  PROJ="$BATS_TEST_TMPDIR" run lint__checks__shell__file_label__run "$(@obj)" "$__f"
+  @obj at3
+  PROJ="$BATS_TEST_TMPDIR" run lint__checks__shell__file_label__run "$at3" "$__f"
   assert_failure
   assert_output --partial "shell/thing/api.sh:3: file doc opens on DOC; a library file's opens on MODULE"
 
@@ -357,7 +360,8 @@ thing__read() {
 FIX
 )"
 
-  PROJ="$BATS_TEST_TMPDIR" run lint__checks__shell__file_label__run "$(@obj)" "$__g"
+  @obj at4
+  PROJ="$BATS_TEST_TMPDIR" run lint__checks__shell__file_label__run "$at4" "$__g"
   assert_failure
   assert_output --partial "src/thing/api.sh:3: file doc opens on DOC; a library file's opens on MODULE"
 }

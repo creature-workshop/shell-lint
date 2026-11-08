@@ -6,10 +6,9 @@ setup() {
   source "$SHELL_LINT_DIR/shell/lint/checks/adrs/page/api.sh"
   source "$SHELL_LINT_DIR/shell/lint/checks/adrs/fixtures.sh"
   PROJ="$(lint__checks__adrs__fixture_repo "$BATS_TEST_TMPDIR/repo")"
-  ONE_PAGE="$(@obj \
+  @obj ONE_PAGE \
     '.config.decisions.folder' adrs \
     '.config.decisions.form' one-page
-  )"
 }
 
 @test "lint__checks__adrs__page__run: passes a record within the default page, its fence and figure line free" {
@@ -22,7 +21,7 @@ setup() {
 
 @test "lint__checks__adrs__page__run: flags a record past the page lint.json sets, saying both counts" {
   __record="$(lint__checks__adrs__fixture_one_page "$PROJ" adrs 000007-fragments one_page)"
-  __opts="$(@set "$ONE_PAGE" '.config.decisions.page_words' 20)"
+  @set __opts "$ONE_PAGE" '.config.decisions.page_words' 20
 
   run lint__checks__adrs__page__run "$__opts" "$__record"
   assert_failure
@@ -34,7 +33,7 @@ setup() {
   __first="$(lint__checks__adrs__fixture_one_page "$PROJ" adrs 000007-fragments one_page)"
   __second="$(lint__checks__adrs__fixture_one_page "$PROJ" adrs 000008-an-earlier-one superseded)"
   __third="$(lint__checks__adrs__fixture_one_page "$PROJ" adrs 000007-fragments-again one_page)"
-  __opts="$(@set "$ONE_PAGE" '.config.decisions.page_words' 20)"
+  @set __opts "$ONE_PAGE" '.config.decisions.page_words' 20
 
   run lint__checks__adrs__page__run "$__opts" "$__first" "$__second" "$__third"
   assert_failure

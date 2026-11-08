@@ -66,7 +66,9 @@ __lint__checks__shell__comments__scan_files() {
 PUB_FUN
 lint__checks__shell__comments__audit() {
   __lint__checks__shell__comments__audit__detector="$1"
-  __lint__checks__shell__comments__audit__roots="$(@join "$(lint__config__library_roots "$(@get "$2" '.config' "$(@obj)")")" ' ')"
+  @obj __lint__checks__shell__comments__audit__obj_1
+  @get __lint__checks__shell__comments__audit__get_2 "$2" '.config' "$__lint__checks__shell__comments__audit__obj_1"
+  @join __lint__checks__shell__comments__audit__roots "$(lint__config__library_roots "$__lint__checks__shell__comments__audit__get_2")" ' '
   shift 2
 
   __lint__checks__shell__comments__audit__hits="$(lint__call_with_existing __lint__checks__shell__comments__scan_files "$@")"

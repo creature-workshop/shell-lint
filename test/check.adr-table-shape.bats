@@ -6,10 +6,9 @@ setup() {
   source "$SHELL_LINT_DIR/shell/lint/checks/adrs/table-shape/api.sh"
   source "$SHELL_LINT_DIR/shell/lint/checks/adrs/fixtures.sh"
   PROJ="$(lint__checks__adrs__fixture_repo "$BATS_TEST_TMPDIR/repo")"
-  ONE_PAGE="$(@obj \
+  @obj ONE_PAGE \
     '.config.decisions.folder' adrs \
     '.config.decisions.form' one-page
-  )"
 }
 
 @test "lint__checks__adrs__table_shape__run: passes a table file that keeps the shape" {
@@ -40,7 +39,7 @@ setup() {
 
 @test "lint__checks__adrs__table_shape__run: holds the summary to a quarter to half of the page lint.json sets" {
   __table="$(lint__checks__adrs__fixture_table "$PROJ" adrs 000007-fragments kinds table)"
-  __opts="$(@set "$ONE_PAGE" '.config.decisions.page_words' 40)"
+  @set __opts "$ONE_PAGE" '.config.decisions.page_words' 40
 
   run lint__checks__adrs__table_shape__run "$__opts" "$__table"
   assert_failure
@@ -59,7 +58,8 @@ setup() {
 @test "lint__checks__adrs__table_shape__run: passes every file in a repository that names no form" {
   __table="$(lint__checks__adrs__fixture_table "$PROJ" adrs 000007-fragments kinds bare_table)"
 
-  run lint__checks__adrs__table_shape__run "$(@obj '.config.decisions.folder' adrs)" "$__table"
+  @obj at1 '.config.decisions.folder' adrs
+  run lint__checks__adrs__table_shape__run "$at1" "$__table"
   assert_success
   assert_output ""
 }

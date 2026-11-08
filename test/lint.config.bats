@@ -8,23 +8,25 @@ setup() {
 @test "lint__config__load: reads and validates this repository's lint.json" {
   run lint__config__load "$SHELL_LINT_DIR/lint.json"
   assert_success
-  assert_equal "$(@get "$output" '.decisions.form')" one-page
+  @get at1 "$output" '.decisions.form'
+  assert_equal "$at1" one-page
 }
 
 @test "lint__config__load: hands the read to shellops' config module when the shell defines it" {
   __proj="$BATS_TEST_TMPDIR/proj"
   mkdir -p "$__proj"
   echo '{"indent":{"width":4}}' > "$__proj/lint.json"
-  self__config__present() { @true; }
+  self__config__present() { @true __self__config__present__out; println "$__self__config__present__out"; }
   self__config__load() { println '{"indent":{"width":7}}'; }
 
   PROJ="$__proj" run lint__config__load
   assert_success
-  assert_equal "$(@get "$output" '.indent.width')" 7
+  @get at2 "$output" '.indent.width'
+  assert_equal "$at2" 7
 }
 
 @test "lint__config__load: a repository that shellops' config module finds no declaration in gets the defaults" {
-  self__config__present() { @false; }
+  self__config__present() { @false __self__config__present__out; println "$__self__config__present__out"; }
   self__config__load() { println '{"indent":{"width":7}}'; }
 
   PROJ="$BATS_TEST_TMPDIR" run lint__config__load
@@ -49,8 +51,10 @@ setup() {
 
   PROJ="$__proj" run lint__config__load
   assert_success
-  assert_equal "$(@get "$output" '.indent.width')" 3
-  assert_equal "$(@get "$output" '.added_only[0]')" indent
+  @get at3 "$output" '.indent.width'
+  assert_equal "$at3" 3
+  @get at4 "$output" '.added_only[0]'
+  assert_equal "$at4" indent
 }
 
 @test "lint__config__load: the declaration under .ops/config wins over a lint.json beside it" {
@@ -61,7 +65,8 @@ setup() {
 
   PROJ="$__proj" run lint__config__load
   assert_success
-  assert_equal "$(@get "$output" '.indent.width')" 3
+  @get at5 "$output" '.indent.width'
+  assert_equal "$at5" 3
 }
 
 @test "lint__config__load: a declaration that breaks the schema is refused" {
@@ -80,7 +85,8 @@ setup() {
 
   PROJ="$__proj" run lint__config__load
   assert_success
-  assert_equal "$(@get "$output" '.indent.width')" 4
+  @get at6 "$output" '.indent.width'
+  assert_equal "$at6" 4
 }
 
 @test "lint__config__load: a repository with no declaration and no lint.json gets the defaults" {
@@ -113,18 +119,24 @@ setup() {
   assert_output "true"
 
   run lint__config__test_trees "$__config"
-  assert_equal "$(@len "$output")" 1
-  assert_equal "$(@get "$output" '.[0]')" "spec"
+  @len at7 "$output"
+  assert_equal "$at7" 1
+  @get at8 "$output" '.[0]'
+  assert_equal "$at8" "spec"
 
   run lint__config__excludes "$__config"
-  assert_equal "$(@len "$output")" 2
-  assert_equal "$(@get "$output" '.[1]')" "my dir"
+  @len at9 "$output"
+  assert_equal "$at9" 2
+  @get at10 "$output" '.[1]'
+  assert_equal "$at10" "my dir"
 
   run lint__config__added_only_checks "$__config"
-  assert_equal "$(@get "$output" '.[0]')" "raw-jq"
+  @get at11 "$output" '.[0]'
+  assert_equal "$at11" "raw-jq"
 
   run lint__config__disabled_checks "$__config"
-  assert_equal "$(@get "$output" '.[0]')" "println"
+  @get at12 "$output" '.[0]'
+  assert_equal "$at12" "println"
 }
 
 @test "config readers: defaults apply when keys are absent" {
@@ -135,15 +147,20 @@ setup() {
   assert_output "false"
 
   run lint__config__test_trees '{}'
-  assert_equal "$(@len "$output")" 2
-  assert_equal "$(@get "$output" '.[0]')" "test"
+  @len at13 "$output"
+  assert_equal "$at13" 2
+  @get at14 "$output" '.[0]'
+  assert_equal "$at14" "test"
 
   run lint__config__excludes '{}'
-  assert_equal "$(@len "$output")" 0
+  @len at15 "$output"
+  assert_equal "$at15" 0
 
   run lint__config__added_only_checks '{}'
-  assert_equal "$(@len "$output")" 0
+  @len at16 "$output"
+  assert_equal "$at16" 0
 
   run lint__config__disabled_checks '{}'
-  assert_equal "$(@len "$output")" 0
+  @len at17 "$output"
+  assert_equal "$at17" 0
 }

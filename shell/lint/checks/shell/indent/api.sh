@@ -25,7 +25,8 @@ __lint__checks__shell__indent__DIR="$SHELL_LINT_DIR/shell/lint/checks/shell/inde
   Returns 0 when every file is clean, 1 otherwise (offenders printed to stderr).
 PUB_FUN
 lint__checks__shell__indent__run() {
-  lint__checks__shell__indent__run__config="$(@get "$1" '.config' "$(@obj)")"
+  @obj __lint__checks__shell__indent__run__obj_1
+  @get lint__checks__shell__indent__run__config "$1" '.config' "$__lint__checks__shell__indent__run__obj_1"
   lint__checks__shell__indent__run__width="$(lint__config__indent_width "$lint__checks__shell__indent__run__config")"
   lint__checks__shell__indent__run__tabs="$(lint__config__allow_tabs "$lint__checks__shell__indent__run__config")"
   lint__checks__shell__indent__run__allow_tabs="$(lint__awk_flag "$lint__checks__shell__indent__run__tabs")"

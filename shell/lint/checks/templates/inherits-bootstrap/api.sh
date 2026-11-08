@@ -26,7 +26,7 @@ Usage: lint__checks__templates__inherits_bootstrap__run <opts> <files...>
 PUB_FUN
 lint__checks__templates__inherits_bootstrap__run() {
   lint__checks__templates__inherits_bootstrap__run__base="$(lint__checks__templates__base "$1")"
-  lint__checks__templates__inherits_bootstrap__run__exempt="$(@arr "$lint__checks__templates__inherits_bootstrap__run__base")"
+  @arr lint__checks__templates__inherits_bootstrap__run__exempt "$lint__checks__templates__inherits_bootstrap__run__base"
   lint__checks__templates__inherits_bootstrap__run__files="$(lint__checks__templates__select "$@")"
   lint__checks__templates__inherits_bootstrap__run__held="$(lint__checks__templates__without \
     "$lint__checks__templates__inherits_bootstrap__run__files" \

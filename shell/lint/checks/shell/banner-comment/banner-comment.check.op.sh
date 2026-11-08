@@ -13,11 +13,13 @@ DOC
   }
 
   @languages() {
-    @arr shell awk jq
+    @arr __at_out shell awk jq
+    println "$__at_out"
   }
 
   @scopes() {
-    @arr code tests
+    @arr __at_out code tests
+    println "$__at_out"
   }
 
   @hint() {

@@ -80,10 +80,9 @@ main() {
 
   @defined "$__main__listing" || exit 0
 
-  __main__opts="$(@obj \
+  @obj __main__opts \
     '.added_only' "$ADDED_ONLY" \
     '.config' "$CONFIG"
-  )"
   lint__run "$__main__opts" "$SELECTED" "$__main__listing" || exit 1
 }
 
@@ -95,9 +94,9 @@ outright rather than mis-filed or silently skipped.
 FUN
 parse_args() {
   INPUT_FILES=""
-  SELECTED="$(@arr)"
-  ADDED_ONLY="$(@false)"
-  LIST="$(@false)"
+  @arr SELECTED
+  @false ADDED_ONLY
+  @false LIST
   EXPLAIN=""
 
   while [ "$#" -gt 0 ]; do
@@ -107,21 +106,21 @@ parse_args() {
         exit 0
         ;;
       --list)
-        LIST="$(@true)"
+        @true LIST
         ;;
       --check)
         args__require_value "$@" || exit 1
-        SELECTED="$(@push "$SELECTED" "$2")"
+        @push SELECTED "$SELECTED" "$2"
         shift
         ;;
       --explain)
         args__require_value "$@" || exit 1
         EXPLAIN="$2"
-        SELECTED="$(@push "$SELECTED" "$2")"
+        @push SELECTED "$SELECTED" "$2"
         shift
         ;;
       --added-only)
-        ADDED_ONLY="$(@true)"
+        @true ADDED_ONLY
         ;;
       -*)
         error "Unknown option: $1"
@@ -152,12 +151,12 @@ Exits with the known names when any --check name has no registered check.
 FUN
 reject_unknown_checks() {
   __reject_unknown_checks__unknown="$(lint__unknown_checks "$SELECTED")"
-  if [ "$(@len "$__reject_unknown_checks__unknown")" -eq 0 ]; then
+  if @len __reject_unknown_checks__len_1 "$__reject_unknown_checks__unknown"; [ "$__reject_unknown_checks__len_1" -eq 0 ]; then
     return 0
   fi
 
-  __reject_unknown_checks__names="$(@join "$__reject_unknown_checks__unknown" ', ')"
-  __reject_unknown_checks__known="$(@join "$(lint__registry__names)" ' ')"
+  @join __reject_unknown_checks__names "$__reject_unknown_checks__unknown" ', '
+  @join __reject_unknown_checks__known "$(lint__registry__names)" ' '
   error "Unknown --check name: $__reject_unknown_checks__names"
   hint "Expected one of: $__reject_unknown_checks__known"
   exit 1

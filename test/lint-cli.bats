@@ -38,7 +38,9 @@ FIX
 )"
   __listing="$(PROJ="$PROJ_DIR" lint__select_named '{}' "$__f")"
 
-  run lint__run "$(@obj '.added_only' false '.config' '{}')" "$(@arr)" "$__listing"
+  @obj at1 '.added_only' false '.config' '{}'
+  @arr at2
+  run lint__run "$at1" "$at2" "$__listing"
   assert_failure
   assert_output --partial "Comment prose describes what the code does now"
   assert_output --partial "A doc block carries no TODO"
@@ -59,7 +61,9 @@ FIX
 )"
   __listing="$(PROJ="$PROJ_DIR" lint__select_named '{}' "$__f")"
 
-  run lint__run "$(@obj '.added_only' false '.config' '{}')" "$(@arr backward-reference)" "$__listing"
+  @obj at3 '.added_only' false '.config' '{}'
+  @arr at4 backward-reference
+  run lint__run "$at3" "$at4" "$__listing"
   assert_failure
   assert_output --partial "Comment prose describes what the code does now"
   refute_output --partial "A doc block carries no TODO"
@@ -74,7 +78,9 @@ FIX
 )"
   __listing="$(PROJ="$PROJ_DIR" lint__select_named '{}' "$__f")"
 
-  run lint__run "$(@obj '.added_only' false '.config' '{"added_only":["raw-jq"]}')" "$(@arr)" "$__listing"
+  @obj at5 '.added_only' false '.config' '{"added_only":["raw-jq"]}'
+  @arr at6
+  run lint__run "$at5" "$at6" "$__listing"
   assert_success
   assert_output --partial "held to new lines only, per the lint declaration's added_only: raw-jq"
   refute_output --partial "Raw jq/opx"
@@ -89,12 +95,16 @@ FIX
 )"
   __listing="$(PROJ="$PROJ_DIR" lint__select_named '{}' "$__f")"
 
-  run lint__run "$(@obj '.added_only' false '.config' '{"disabled":["raw-jq"]}')" "$(@arr)" "$__listing"
+  @obj at7 '.added_only' false '.config' '{"disabled":["raw-jq"]}'
+  @arr at8
+  run lint__run "$at7" "$at8" "$__listing"
   assert_success
   assert_output --partial "turned off, per the lint declaration's disabled: raw-jq"
   refute_output --partial "Raw jq/opx"
 
-  run lint__run "$(@obj '.added_only' true '.config' '{"disabled":["raw-jq"]}')" "$(@arr)" "$__listing"
+  @obj at9 '.added_only' true '.config' '{"disabled":["raw-jq"]}'
+  @arr at10
+  run lint__run "$at9" "$at10" "$__listing"
   assert_success
   assert_output --partial "turned off, per the lint declaration's disabled: raw-jq"
   refute_output --partial "Raw jq/opx"
@@ -114,7 +124,9 @@ FIX
 )"
   __listing="$(PROJ="$PROJ_DIR" lint__select_named '{}' "$__f")"
 
-  run lint__run "$(@obj '.added_only' false '.config' '{}')" "$(@arr)" "$__listing"
+  @obj at11 '.added_only' false '.config' '{}'
+  @arr at12
+  run lint__run "$at11" "$at12" "$__listing"
   assert_success
   assert_output ""
 }

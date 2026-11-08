@@ -13,11 +13,13 @@ DOC
   }
 
   @languages() {
-    @arr yaml
+    @arr __at_out yaml
+    println "$__at_out"
   }
 
   @scopes() {
-    @arr code
+    @arr __at_out code
+    println "$__at_out"
   }
 
   @hint() {

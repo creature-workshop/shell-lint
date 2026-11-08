@@ -44,7 +44,7 @@ lint__config__load() {
   fi
 
   __lint__config__load__config="$(__lint__config__load_declaration)" || return 1
-  @defined "$__lint__config__load__config" || { @obj; return 0; }
+  @defined "$__lint__config__load__config" || { @obj __lint__config__load__out; println "$__lint__config__load__out"; return 0; }
   @validate "$__lint__config__load__config" "$__lint__config__SCHEMA" || return 1
   println "$__lint__config__load__config"
 }
@@ -87,7 +87,8 @@ itself stands in for a shellops that has the module.
 FUN
 __lint__config__has_shellops_module() {
   __lint__config__has_shellops_module__verb="$(command -v self__config__load || true)"
-  @succeeds @defined "$__lint__config__has_shellops_module__verb"
+  @succeeds __lint__config__has_shellops_module__out @defined "$__lint__config__has_shellops_module__verb"
+  println "$__lint__config__has_shellops_module__out"
 }
 
 : <<'FUN'
@@ -165,11 +166,13 @@ Usage: __lint__config__load_json <path>
 FUN
 __lint__config__load_json() {
   if [ ! -f "$1" ]; then
-    @obj
+    @obj __lint__config__load_json__out
+    println "$__lint__config__load_json__out"
     return 0
   fi
 
-  @load "$1" "$__lint__config__SCHEMA"
+  @load __lint__config__load_json__out "$1" "$__lint__config__SCHEMA"
+  println "$__lint__config__load_json__out"
 }
 
 : <<'PUB_FUN'
@@ -177,21 +180,25 @@ Prints the directories a repository keeps its own lint checks under, as a
 struct array of PROJ-relative paths; empty by default.
 PUB_FUN
 lint__config__check_roots() {
-  @get "$1" '.checks' "$(@arr)"
+  @arr __lint__config__check_roots__arr_1
+  @get __lint__config__check_roots__out "$1" '.checks' "$__lint__config__check_roots__arr_1"
+  println "$__lint__config__check_roots__out"
 }
 
 : <<'PUB_FUN'
 Prints the number of spaces one indent level is, 2 by default.
 PUB_FUN
 lint__config__indent_width() {
-  @get "$1" '.indent.width' 2
+  @get __lint__config__indent_width__out "$1" '.indent.width' 2
+  println "$__lint__config__indent_width__out"
 }
 
 : <<'PUB_FUN'
 Prints true when leading tabs are allowed, false by default.
 PUB_FUN
 lint__config__allow_tabs() {
-  @get "$1" '.indent.tabs' false
+  @get __lint__config__allow_tabs__out "$1" '.indent.tabs' false
+  println "$__lint__config__allow_tabs__out"
 }
 
 : <<'PUB_FUN'
@@ -200,7 +207,9 @@ tests by default. A file under a directory with one of these names, anywhere
 in its path, is in the tests scope.
 PUB_FUN
 lint__config__test_trees() {
-  @get "$1" '.tests' "$(@arr test tests)"
+  @arr __lint__config__test_trees__arr_2 test tests
+  @get __lint__config__test_trees__out "$1" '.tests' "$__lint__config__test_trees__arr_2"
+  println "$__lint__config__test_trees__out"
 }
 
 : <<'PUB_FUN'
@@ -208,7 +217,9 @@ Prints the directories, relative to the repository root, that no check looks
 in; a struct array, empty by default.
 PUB_FUN
 lint__config__excludes() {
-  @get "$1" '.exclude' "$(@arr)"
+  @arr __lint__config__excludes__arr_3
+  @get __lint__config__excludes__out "$1" '.exclude' "$__lint__config__excludes__arr_3"
+  println "$__lint__config__excludes__out"
 }
 
 : <<'PUB_FUN'
@@ -220,7 +231,8 @@ SHELLOPS_DIR (ADR 000045). A file under one is a module, its namespace the
 path under the root; a consumer's root lib/ is its product's until named.
 PUB_FUN
 lint__config__library_roots() {
-  @get "$1" '.library_roots' "$(__lint__config__default_library_roots)"
+  @get __lint__config__library_roots__out "$1" '.library_roots' "$(__lint__config__default_library_roots)"
+  println "$__lint__config__library_roots__out"
 }
 
 : <<'FUN'
@@ -239,7 +251,8 @@ __lint__config__default_library_roots() {
 Prints shellops' own library roots, lib and interpreter, as a struct array.
 FUN
 __lint__config__shellops_library_roots() {
-  @arr lib interpreter
+  @arr __lint__config__shellops_library_roots__out lib interpreter
+  println "$__lint__config__shellops_library_roots__out"
 }
 
 : <<'FUN'
@@ -247,7 +260,8 @@ Prints a consumer's library roots, the homes it keeps its shell in, as a
 struct array: scripts, shell and src.
 FUN
 __lint__config__consumer_library_roots() {
-  @arr scripts shell src
+  @arr __lint__config__consumer_library_roots__out scripts shell src
+  println "$__lint__config__consumer_library_roots__out"
 }
 
 : <<'PUB_FUN'
@@ -257,7 +271,9 @@ the team is working off: new lines still have to pass it, and a full sweep
 leaves it out rather than failing on the old ones.
 PUB_FUN
 lint__config__added_only_checks() {
-  @get "$1" '.added_only' "$(@arr)"
+  @arr __lint__config__added_only_checks__arr_4
+  @get __lint__config__added_only_checks__out "$1" '.added_only' "$__lint__config__added_only_checks__arr_4"
+  println "$__lint__config__added_only_checks__out"
 }
 
 : <<'PUB_FUN'
@@ -267,7 +283,9 @@ the repository does not use, so its findings are not a backlog that new
 lines are held to: the check is left out of every run, and named.
 PUB_FUN
 lint__config__disabled_checks() {
-  @get "$1" '.disabled' "$(@arr)"
+  @arr __lint__config__disabled_checks__arr_5
+  @get __lint__config__disabled_checks__out "$1" '.disabled' "$__lint__config__disabled_checks__arr_5"
+  println "$__lint__config__disabled_checks__out"
 }
 
 : <<'PUB_FUN'
@@ -275,7 +293,8 @@ Prints the directory, relative to the repository root, that holds the
 repository's decision records; docs/decisions by default.
 PUB_FUN
 lint__config__decisions_folder() {
-  @get "$1" '.decisions.folder' docs/decisions
+  @get __lint__config__decisions_folder__out "$1" '.decisions.folder' docs/decisions
+  println "$__lint__config__decisions_folder__out"
 }
 
 : <<'PUB_FUN'
@@ -283,7 +302,8 @@ Prints the form the repository holds its decision records to: one-page, or
 nothing when the repository names no form.
 PUB_FUN
 lint__config__decisions_form() {
-  @get "$1" '.decisions.form' ''
+  @get __lint__config__decisions_form__out "$1" '.decisions.form' ''
+  println "$__lint__config__decisions_form__out"
 }
 
 : <<'PUB_FUN'
@@ -291,7 +311,8 @@ Prints how many words of prose a one-page decision record may spend, 450 by
 default.
 PUB_FUN
 lint__config__decisions_page_words() {
-  @get "$1" '.decisions.page_words' 450
+  @get __lint__config__decisions_page_words__out "$1" '.decisions.page_words' 450
+  println "$__lint__config__decisions_page_words__out"
 }
 
 : <<'PUB_FUN'
@@ -299,7 +320,8 @@ Prints how many digits a one-page decision record's number is written with,
 6 by default.
 PUB_FUN
 lint__config__decisions_number_digits() {
-  @get "$1" '.decisions.number_digits' 6
+  @get __lint__config__decisions_number_digits__out "$1" '.decisions.number_digits' 6
+  println "$__lint__config__decisions_number_digits__out"
 }
 
 : <<'PUB_FUN'
@@ -308,7 +330,8 @@ repository root; templates/*/template.yml by default. A yaml file it does
 not match is not a template, and the template checks skip it.
 PUB_FUN
 lint__config__templates_glob() {
-  @get "$1" '.templates.glob' 'templates/*/template.yml'
+  @get __lint__config__templates_glob__out "$1" '.templates.glob' 'templates/*/template.yml'
+  println "$__lint__config__templates_glob__out"
 }
 
 : <<'PUB_FUN'
@@ -317,7 +340,8 @@ template allowed to define before_script. Nothing by default, which holds
 every template to the rule.
 PUB_FUN
 lint__config__templates_base() {
-  @get "$1" '.templates.base' ''
+  @get __lint__config__templates_base__out "$1" '.templates.base' ''
+  println "$__lint__config__templates_base__out"
 }
 
 : <<'PUB_FUN'
@@ -326,7 +350,8 @@ rule that matches a merge-request pipeline must contain. Nothing by default,
 which turns the job-lands-once check off.
 PUB_FUN
 lint__config__templates_mark() {
-  @get "$1" '.templates.mark' ''
+  @get __lint__config__templates_mark__out "$1" '.templates.mark' ''
+  println "$__lint__config__templates_mark__out"
 }
 
 : <<'PUB_FUN'
@@ -335,5 +360,7 @@ not, as a struct array of paths relative to the repository root; empty by
 default. Governance checks and previews go here.
 PUB_FUN
 lint__config__templates_every_push() {
-  @get "$1" '.templates.every_push' "$(@arr)"
+  @arr __lint__config__templates_every_push__arr_6
+  @get __lint__config__templates_every_push__out "$1" '.templates.every_push' "$__lint__config__templates_every_push__arr_6"
+  println "$__lint__config__templates_every_push__out"
 }

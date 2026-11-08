@@ -6,10 +6,9 @@ setup() {
   source "$SHELL_LINT_DIR/shell/lint/checks/adrs/citations/api.sh"
   source "$SHELL_LINT_DIR/shell/lint/checks/adrs/fixtures.sh"
   PROJ="$(lint__checks__adrs__fixture_repo "$BATS_TEST_TMPDIR/repo")"
-  ONE_PAGE="$(@obj \
+  @obj ONE_PAGE \
     '.config.decisions.folder' adrs \
     '.config.decisions.form' one-page
-  )"
 }
 
 @test "lint__checks__adrs__citations__run: passes a linked citation and a bare one inside a fenced example" {

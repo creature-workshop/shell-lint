@@ -11,7 +11,9 @@ setup() {
 
   # The fixtures under lib/ are shellops-shaped, and lib/ is a library root
   # only when the options name it, as shellops' own lint.json does.
-  SHELLOPS_ROOTS="$(@obj '.config' "$(@obj '.library_roots' "$(@arr lib interpreter)")")"
+  @arr __setup__arr_1 lib interpreter
+  @obj __setup__obj_2 '.library_roots' "$__setup__arr_1"
+  @obj SHELLOPS_ROOTS '.config' "$__setup__obj_2"
 }
 
 @test "lint__checks__shell__file_segment__run: a public name, a private name and a variable that spell the stem with one underscore are findings, and a function's variables are judged through the function" {
@@ -45,7 +47,8 @@ setup() {
 }
 
 @test "lint__checks__shell__file_segment__run: an entrypoint carries no module path" {
-  run lint__checks__shell__file_segment__run "$(@obj)" "$ROOT/cli/main.sh"
+  @obj at3
+  run lint__checks__shell__file_segment__run "$at3" "$ROOT/cli/main.sh"
 
   assert_success
   assert_output ""
@@ -61,7 +64,8 @@ consumer() {
 @test "lint__checks__shell__file_segment__run: a consumer's module under its shell home is judged by its path under that root" {
   __c="$(consumer)"
 
-  PROJ="$__c" run lint__checks__shell__file_segment__run "$(@obj)" "$__c/shell/demo/latest.sh"
+  @obj at4
+  PROJ="$__c" run lint__checks__shell__file_segment__run "$at4" "$__c/shell/demo/latest.sh"
 
   assert_failure
   assert_output --partial "latest.sh:1: name demo__latest_read spells latest, its file, with one underscore; the file is a segment, so the name begins demo__latest__"

@@ -69,7 +69,8 @@ lint__load_project_checks() {
 PROJ, when the directory exists.
 FUN
 __lint__checks__load_root() {
-  __lint__checks__load_root__dir="$PROJ/$(@unwrap "$1")"
+  @unwrap __lint__checks__load_root__unwrap_1 "$1"
+  __lint__checks__load_root__dir="$PROJ/$__lint__checks__load_root__unwrap_1"
   [ -d "$__lint__checks__load_root__dir" ] || return 0
   lint__load_checks "$__lint__checks__load_root__dir"
 }

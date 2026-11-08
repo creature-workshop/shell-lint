@@ -13,11 +13,13 @@ DOC
   }
 
   @languages() {
-    @arr markdown
+    @arr __at_out markdown
+    println "$__at_out"
   }
 
   @scopes() {
-    @arr code
+    @arr __at_out code
+    println "$__at_out"
   }
 
   @hint() {

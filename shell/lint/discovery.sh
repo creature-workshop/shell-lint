@@ -30,14 +30,16 @@ __lint__discovery__TAB="$(printf '\t')"
 Prints lint.json's exclude directories, one per line.
 FUN
 __lint__discovery__exclude_lines() {
-  @join "$(lint__config__excludes "$1")" "$__lint__discovery__NL"
+  @join __lint__discovery__exclude_lines__out "$(lint__config__excludes "$1")" "$__lint__discovery__NL"
+  println "$__lint__discovery__exclude_lines__out"
 }
 
 : <<'FUN'
 Prints lint.json's test tree names, one per line.
 FUN
 __lint__discovery__test_tree_lines() {
-  @join "$(lint__config__test_trees "$1")" "$__lint__discovery__NL"
+  @join __lint__discovery__test_tree_lines__out "$(lint__config__test_trees "$1")" "$__lint__discovery__NL"
+  println "$__lint__discovery__test_tree_lines__out"
 }
 
 : <<'PUB_FUN'
@@ -108,7 +110,8 @@ FUN
 __lint__discovery__named_is_excluded() {
   __lint__discovery__named_is_excluded__rel="$(lint__rel_path "$1")"
   if [ "$__lint__discovery__named_is_excluded__rel" = "$1" ]; then
-    @false
+    @false __lint__discovery__named_is_excluded__out
+    println "$__lint__discovery__named_is_excluded__out"
     return 0
   fi
 

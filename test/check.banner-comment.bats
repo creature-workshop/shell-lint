@@ -22,7 +22,8 @@ helper() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at1
+  run lint__checks__shell__banner_comment__run "$at1" "$__f"
   assert_failure
   assert_output --partial "sectioned.sh:5:"
   assert_output --partial "sectioned.sh:7:"
@@ -38,7 +39,8 @@ read_labels() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at2
+  run lint__checks__shell__banner_comment__run "$at2" "$__f"
   assert_failure
   assert_output --partial "boxed.sh:1:"
 }
@@ -54,7 +56,8 @@ helper() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at3
+  run lint__checks__shell__banner_comment__run "$at3" "$__f"
   assert_failure
   assert_output --partial "hashes.sh:1:"
   assert_output --partial "hashes.sh:3:"
@@ -71,7 +74,8 @@ FIX
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at4
+  run lint__checks__shell__banner_comment__run "$at4" "$__f"
   assert_failure
   assert_output --partial "prog.awk:1:"
 }
@@ -87,7 +91,8 @@ FIX
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at5
+  run lint__checks__shell__banner_comment__run "$at5" "$__f"
   assert_failure
   assert_output --partial "suite.bats:1:"
 }
@@ -104,7 +109,8 @@ say() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at6
+  run lint__checks__shell__banner_comment__run "$at6" "$__f"
   assert_success
   assert_output ""
 }
@@ -117,7 +123,8 @@ rule() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at7
+  run lint__checks__shell__banner_comment__run "$at7" "$__f"
   assert_success
   assert_output ""
 }
@@ -138,7 +145,8 @@ main() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at8
+  run lint__checks__shell__banner_comment__run "$at8" "$__f"
   assert_success
   assert_output ""
 }
@@ -152,7 +160,8 @@ frame_top() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at9
+  run lint__checks__shell__banner_comment__run "$at9" "$__f"
   assert_success
   assert_output ""
 }
@@ -169,7 +178,8 @@ frame() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at10
+  run lint__checks__shell__banner_comment__run "$at10" "$__f"
   assert_success
   assert_output ""
 }
@@ -187,7 +197,8 @@ frame() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at11
+  run lint__checks__shell__banner_comment__run "$at11" "$__f"
   assert_failure
   assert_output --partial "marked_too_far.sh:5:"
 }
@@ -210,7 +221,8 @@ helper() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at12
+  run lint__checks__shell__banner_comment__run "$at12" "$__f"
   assert_failure
   assert_output --partial "marked_run_too_far.sh:9:"
   assert_output --partial "floating comment"
@@ -230,7 +242,8 @@ helper() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at13
+  run lint__checks__shell__banner_comment__run "$at13" "$__f"
   assert_failure
   assert_output --partial "floating.sh:5:"
   assert_output --partial "floating comment"
@@ -252,7 +265,8 @@ FIX
     | fixture labeled.bats
   )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at14
+  run lint__checks__shell__banner_comment__run "$at14" "$__f"
   assert_failure
   assert_output --partial "labeled.bats:5:"
 }
@@ -271,7 +285,8 @@ helper() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at15
+  run lint__checks__shell__banner_comment__run "$at15" "$__f"
   assert_failure
   assert_output --partial "stealth.sh:5:"
   assert_output --partial "floating comment"
@@ -288,7 +303,8 @@ rm -f ./scratch
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at16
+  run lint__checks__shell__banner_comment__run "$at16" "$__f"
   assert_failure
   assert_output --partial "script.sh:4:"
   assert_output --partial "floating comment"
@@ -304,7 +320,8 @@ say() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at17
+  run lint__checks__shell__banner_comment__run "$at17" "$__f"
   assert_failure
   assert_output --partial "trailing.sh:5:"
 }
@@ -322,7 +339,8 @@ helper() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at18
+  run lint__checks__shell__banner_comment__run "$at18" "$__f"
   assert_success
   assert_output ""
 }
@@ -344,7 +362,8 @@ say() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at19
+  run lint__checks__shell__banner_comment__run "$at19" "$__f"
   assert_success
   assert_output ""
 }
@@ -366,7 +385,8 @@ function emit(line) {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at20
+  run lint__checks__shell__banner_comment__run "$at20" "$__f"
   assert_failure
   assert_output --partial "labeled.awk:8:"
   refute_output --partial "labeled.awk:1:"
@@ -384,7 +404,8 @@ def note_id: .id;
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at21
+  run lint__checks__shell__banner_comment__run "$at21" "$__f"
   assert_failure
   assert_output --partial "labeled.jq:5:"
   refute_output --partial "labeled.jq:1:"
@@ -405,7 +426,8 @@ helper() {
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at22
+  run lint__checks__shell__banner_comment__run "$at22" "$__f"
   assert_success
   assert_output ""
 }
@@ -425,7 +447,8 @@ FIX
     | fixture directives.bats
   )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__f"
+  @obj at23
+  run lint__checks__shell__banner_comment__run "$at23" "$__f"
   assert_success
   assert_output ""
 }
@@ -508,7 +531,8 @@ d() { :; }
 FIX
 )"
 
-  run lint__checks__shell__banner_comment__run "$(@obj)" "$__one" "$__two"
+  @obj at24
+  run lint__checks__shell__banner_comment__run "$at24" "$__one" "$__two"
   assert_failure
   assert_output --partial "one.sh:3:"
   assert_output --partial "two.sh:2:"

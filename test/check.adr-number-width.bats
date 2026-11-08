@@ -6,10 +6,9 @@ setup() {
   source "$SHELL_LINT_DIR/shell/lint/checks/adrs/number-width/api.sh"
   source "$SHELL_LINT_DIR/shell/lint/checks/adrs/fixtures.sh"
   PROJ="$(lint__checks__adrs__fixture_repo "$BATS_TEST_TMPDIR/repo")"
-  ONE_PAGE="$(@obj \
+  @obj ONE_PAGE \
     '.config.decisions.folder' adrs \
     '.config.decisions.form' one-page
-  )"
 }
 
 @test "lint__checks__adrs__number_width__run: passes a record whose number has six digits" {
@@ -31,7 +30,7 @@ setup() {
 @test "lint__checks__adrs__number_width__run: holds a record to the width lint.json sets" {
   __record="$(lint__checks__adrs__fixture_one_page "$PROJ" adrs 0007-fragments one_page)"
 
-  __opts="$(@set "$ONE_PAGE" '.config.decisions.number_digits' 4)"
+  @set __opts "$ONE_PAGE" '.config.decisions.number_digits' 4
 
   run lint__checks__adrs__number_width__run "$__opts" "$__record"
   assert_success

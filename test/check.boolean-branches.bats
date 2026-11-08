@@ -18,7 +18,8 @@ is_y() {
 FIX
 )"
 
-  run lint__checks__shell__boolean_branches__run "$(@obj)" "$__f"
+  @obj at1
+  run lint__checks__shell__boolean_branches__run "$at1" "$__f"
   assert_failure
   assert_line --index 0 --partial "$__f:2: predicate written as an if"
   assert_equal "${#lines[@]}" 1
@@ -36,7 +37,8 @@ is_not_y() {
 FIX
 )"
 
-  run lint__checks__shell__boolean_branches__run "$(@obj)" "$__f"
+  @obj at2
+  run lint__checks__shell__boolean_branches__run "$at2" "$__f"
   assert_failure
   assert_output --partial "$__f:2:"
 }
@@ -49,7 +51,8 @@ is_y() {
 FIX
 )"
 
-  run lint__checks__shell__boolean_branches__run "$(@obj)" "$__f"
+  @obj at3
+  run lint__checks__shell__boolean_branches__run "$at3" "$__f"
   assert_failure
   assert_output --partial "$__f:2:"
 }
@@ -65,7 +68,8 @@ is_y() {
 FIX
 )"
 
-  run lint__checks__shell__boolean_branches__run "$(@obj)" "$__f"
+  @obj at4
+  run lint__checks__shell__boolean_branches__run "$at4" "$__f"
   assert_failure
   assert_line --index 0 --partial "$__f:2:"
 }
@@ -83,7 +87,8 @@ is_open() {
 FIX
 )"
 
-  run lint__checks__shell__boolean_branches__run "$(@obj)" "$__f"
+  @obj at5
+  run lint__checks__shell__boolean_branches__run "$at5" "$__f"
   assert_failure
   assert_output --partial "$__f:2:"
 }
@@ -110,7 +115,8 @@ is_z() {
 FIX
 )"
 
-  run lint__checks__shell__boolean_branches__run "$(@obj)" "$__a" "$__b"
+  @obj at6
+  run lint__checks__shell__boolean_branches__run "$at6" "$__a" "$__b"
   assert_failure
   assert_output --partial "$__a:2:"
   assert_output --partial "$__b:2:"
@@ -137,7 +143,8 @@ either() {
 FIX
 )"
 
-  run lint__checks__shell__boolean_branches__run "$(@obj)" "$__f"
+  @obj at7
+  run lint__checks__shell__boolean_branches__run "$at7" "$__f"
   assert_success
   assert_output ""
 }
@@ -154,7 +161,8 @@ is_record() {
 FIX
 )"
 
-  run lint__checks__shell__boolean_branches__run "$(@obj)" "$__f"
+  @obj at8
+  run lint__checks__shell__boolean_branches__run "$at8" "$__f"
   assert_success
   assert_output ""
 }
@@ -179,7 +187,8 @@ same_answer() {
 FIX
 )"
 
-  run lint__checks__shell__boolean_branches__run "$(@obj)" "$__f"
+  @obj at9
+  run lint__checks__shell__boolean_branches__run "$at9" "$__f"
   assert_success
   assert_output ""
 }
@@ -205,13 +214,15 @@ is_y() {
 FIX
 )"
 
-  run lint__checks__shell__boolean_branches__run "$(@obj)" "$__f"
+  @obj at10
+  run lint__checks__shell__boolean_branches__run "$at10" "$__f"
   assert_success
   assert_output ""
 }
 
 @test "lint__checks__shell__boolean_branches__run: accepts a path that is not a file" {
-  run lint__checks__shell__boolean_branches__run "$(@obj)" "$BATS_TEST_TMPDIR/missing.sh"
+  @obj at11
+  run lint__checks__shell__boolean_branches__run "$at11" "$BATS_TEST_TMPDIR/missing.sh"
   assert_success
   assert_output ""
 }

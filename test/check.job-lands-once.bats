@@ -29,12 +29,13 @@ setup() {
 }
 
 @test "lint__checks__templates__job_lands_once__run: a template named under every_push is exempt" {
-  __templates="$(@obj \
+  @arr at1 shell/lint/checks/templates/unmarked.fixture.yml
+  @obj __templates \
     '.glob' 'shell/lint/checks/templates/*.fixture.yml' \
     '.mark' 'scheduler\/next-merge' \
-    '.every_push' "$(@arr shell/lint/checks/templates/unmarked.fixture.yml)"
-  )"
-  __options="$(@obj '.config' "$(@obj '.templates' "$__templates")")"
+    '.every_push' "$at1"
+  @obj at2 '.templates' "$__templates"
+  @obj __options '.config' "$at2"
 
   run lint__checks__templates__job_lands_once__run "$__options" "$UNMARKED"
   assert_success
@@ -136,7 +137,9 @@ FIX
 }
 
 @test "lint__checks__templates__job_lands_once__run: with no mark in lint.json the check is off" {
-  __options="$(@obj '.config' "$(@obj '.templates' "$(@obj '.glob' 'shell/lint/checks/templates/*.fixture.yml')")")"
+  @obj at3 '.glob' 'shell/lint/checks/templates/*.fixture.yml'
+  @obj at4 '.templates' "$at3"
+  @obj __options '.config' "$at4"
 
   run lint__checks__templates__job_lands_once__run "$__options" "$UNMARKED"
   assert_success

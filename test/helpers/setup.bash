@@ -15,3 +15,4 @@ untraced source "$SHELLOPS_DIR/.envrc"
 
 untraced load "$SHELLOPS_DIR/test/lib/bats-support/load.bash"
 untraced load "$SHELLOPS_DIR/test/lib/bats-assert/load.bash"
+source "$SHELLOPS_DIR/test/helpers/printing.bash"

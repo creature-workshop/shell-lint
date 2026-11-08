@@ -13,7 +13,8 @@ setup() {
 }
 
 @test "lint__checks__adrs__number_is_unique__run: passes records whose numbers are their own" {
-  run lint__checks__adrs__number_is_unique__run "$(@obj)" \
+  @obj at1
+  run lint__checks__adrs__number_is_unique__run "$at1" \
     "$PROJ/docs/decisions/000001-a-first.md" \
     "$PROJ/docs/decisions/000002-a-second.md"
   assert_success
@@ -23,7 +24,8 @@ setup() {
 @test "lint__checks__adrs__number_is_unique__run: flags a record whose number a record beside it carries" {
   __draft="$(lint__checks__adrs__fixture_record "$PROJ" 000002-a-rival.md)"
 
-  run lint__checks__adrs__number_is_unique__run "$(@obj)" "$__draft"
+  @obj at2
+  run lint__checks__adrs__number_is_unique__run "$at2" "$__draft"
   assert_failure
   assert_output "$__draft:1: number 000002 is taken by 000002-a-second.md"
 }
@@ -32,7 +34,8 @@ setup() {
   __draft="$(lint__checks__adrs__fixture_record "$PROJ" 000003-a-third.md)"
   lint__checks__adrs__fixture_upstream_record "$PROJ" 000003-a-landed.md
 
-  run lint__checks__adrs__number_is_unique__run "$(@obj)" "$__draft"
+  @obj at3
+  run lint__checks__adrs__number_is_unique__run "$at3" "$__draft"
   assert_failure
   assert_output "$__draft:1: number 000003 is taken by 000003-a-landed.md"
 }
@@ -41,14 +44,16 @@ setup() {
   git -C "$PROJ" mv docs/decisions/000002-a-second.md docs/decisions/000004-a-second.md
   __rival="$(lint__checks__adrs__fixture_record "$PROJ" 000002-a-rival.md)"
 
-  run lint__checks__adrs__number_is_unique__run "$(@obj)" "$__rival" "$PROJ/docs/decisions/000004-a-second.md"
+  @obj at4
+  run lint__checks__adrs__number_is_unique__run "$at4" "$__rival" "$PROJ/docs/decisions/000004-a-second.md"
   assert_success
 }
 
 @test "lint__checks__adrs__number_is_unique__run: passes over markdown outside the decisions folder" {
   printf '# notes\n' > "$PROJ/000001-notes.md"
 
-  run lint__checks__adrs__number_is_unique__run "$(@obj)" "$PROJ/000001-notes.md"
+  @obj at5
+  run lint__checks__adrs__number_is_unique__run "$at5" "$PROJ/000001-notes.md"
   assert_success
   assert_output ""
 }
@@ -56,12 +61,13 @@ setup() {
 @test "lint__checks__adrs__number_is_unique__run: reads the working tree alone when origin has no default branch" {
   git -C "$PROJ" update-ref -d refs/remotes/origin/main
 
-  run lint__checks__adrs__number_is_unique__run "$(@obj)" "$PROJ/docs/decisions/000001-a-first.md"
+  @obj at6
+  run lint__checks__adrs__number_is_unique__run "$at6" "$PROJ/docs/decisions/000001-a-first.md"
   assert_success
 }
 
 @test "lint__checks__adrs__number_is_unique__run: flags a one-page record whose directory carries a number another directory holds" {
-  __opts="$(@obj '.config.decisions.folder' adrs)"
+  @obj __opts '.config.decisions.folder' adrs
   lint__checks__adrs__fixture_one_page "$PROJ" adrs 000007-fragments one_page >/dev/null
   __rival="$(lint__checks__adrs__fixture_one_page "$PROJ" adrs 000007-singlets one_page)"
 
@@ -71,7 +77,7 @@ setup() {
 }
 
 @test "lint__checks__adrs__number_is_unique__run: reads the folder lint.json names, so a record under the default folder is passed over" {
-  __opts="$(@obj '.config.decisions.folder' adrs)"
+  @obj __opts '.config.decisions.folder' adrs
   __draft="$(lint__checks__adrs__fixture_record "$PROJ" 000002-a-rival.md)"
 
   run lint__checks__adrs__number_is_unique__run "$__opts" "$__draft"

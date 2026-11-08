@@ -42,7 +42,8 @@ Usage: lint__checks__adrs__form__check <program> <opts> <files...>
 PUB_FUN
 lint__checks__adrs__form__check() {
   __lint__checks__adrs__form__check__program="$1"
-  __lint__checks__adrs__form__check__config="$(@get "$2" '.config' "$(@obj)")"
+  @obj __lint__checks__adrs__form__check__obj_1
+  @get __lint__checks__adrs__form__check__config "$2" '.config' "$__lint__checks__adrs__form__check__obj_1"
   __lint__checks__adrs__form__check__folder="$(lint__checks__adrs__folder "$2")"
   @is_true "$(lint__checks__adrs__form__is_named "$2")" || return 0
   shift 2
@@ -77,9 +78,11 @@ repository names no form.
 Usage: lint__checks__adrs__form__is_named <opts>
 PUB_FUN
 lint__checks__adrs__form__is_named() {
-  __lint__checks__adrs__form__is_named__config="$(@get "$1" '.config' "$(@obj)")"
+  @obj __lint__checks__adrs__form__is_named__obj_2
+  @get __lint__checks__adrs__form__is_named__config "$1" '.config' "$__lint__checks__adrs__form__is_named__obj_2"
   __lint__checks__adrs__form__is_named__form="$(
     lint__config__decisions_form "$__lint__checks__adrs__form__is_named__config"
   )"
-  @succeeds test "$__lint__checks__adrs__form__is_named__form" = one-page
+  @succeeds __lint__checks__adrs__form__is_named__out test "$__lint__checks__adrs__form__is_named__form" = one-page
+  println "$__lint__checks__adrs__form__is_named__out"
 }

@@ -32,14 +32,15 @@ Usage: lint__run <opts> <selected> <listing>
 PUB_FUN
 lint__run() {
   __lint__run__opts="$1"
-  __lint__run__selected="$(@join "$2" ' ')"
+  @join __lint__run__selected "$2" ' '
   __lint__run__listing="$3"
-  __lint__run__added_only="$(@option "$1" added_only false)"
-  __lint__run__config="$(@get "$1" '.config' "$(@obj)")"
+  @option __lint__run__added_only "$1" added_only false
+  @obj __lint__run__obj_1
+  @get __lint__run__config "$1" '.config' "$__lint__run__obj_1"
   __lint__run__deferred_checks="$(lint__config__added_only_checks "$__lint__run__config")"
-  __lint__run__deferred="$(@join "$__lint__run__deferred_checks" ' ')"
+  @join __lint__run__deferred "$__lint__run__deferred_checks" ' '
   __lint__run__disabled_checks="$(lint__config__disabled_checks "$__lint__run__config")"
-  __lint__run__disabled="$(@join "$__lint__run__disabled_checks" ' ')"
+  @join __lint__run__disabled "$__lint__run__disabled_checks" ' '
 
   __lint__RUN_STATUS=0
   __lint__RUN_SKIPPED=""
@@ -71,7 +72,7 @@ __lint__run__name_left_out() {
 it is selected and not skipped, and folds its result into the run's status.
 FUN
 __lint__run__one() {
-  __lint__run__one__name="$(@unwrap "$1")"
+  @unwrap __lint__run__one__name "$1"
 
   if @is_false "$(__lint__run__is_selected "$__lint__run__one__name")"; then
     return 0
@@ -173,13 +174,14 @@ selected and so every check runs.
 FUN
 __lint__run__is_selected() {
   if ! @defined "$__lint__run__selected"; then
-    @true
+    @true __lint__run__is_selected__out
+    println "$__lint__run__is_selected__out"
     return 0
   fi
 
   case " $__lint__run__selected " in
-    *" $1 "*) @true ;;
-    *) @false ;;
+    *" $1 "*) @true __lint__run__is_selected__out; println "$__lint__run__is_selected__out" ;;
+    *) @false __lint__run__is_selected__out; println "$__lint__run__is_selected__out" ;;
   esac
 }
 
@@ -189,13 +191,14 @@ false otherwise.
 FUN
 __lint__run__is_deferred() {
   if @is_true "$__lint__run__added_only"; then
-    @false
+    @false __lint__run__is_deferred__out
+    println "$__lint__run__is_deferred__out"
     return 0
   fi
 
   case " $__lint__run__deferred " in
-    *" $1 "*) @true ;;
-    *) @false ;;
+    *" $1 "*) @true __lint__run__is_deferred__out; println "$__lint__run__is_deferred__out" ;;
+    *) @false __lint__run__is_deferred__out; println "$__lint__run__is_deferred__out" ;;
   esac
 }
 
@@ -205,7 +208,7 @@ otherwise.
 FUN
 __lint__run__is_disabled() {
   case " $__lint__run__disabled " in
-    *" $1 "*) @true ;;
-    *) @false ;;
+    *" $1 "*) @true __lint__run__is_disabled__out; println "$__lint__run__is_disabled__out" ;;
+    *) @false __lint__run__is_disabled__out; println "$__lint__run__is_disabled__out" ;;
   esac
 }

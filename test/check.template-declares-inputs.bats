@@ -43,7 +43,9 @@ FIX
 }
 
 @test "lint__checks__templates__declares_inputs__run: a yaml file the pattern does not name is passed over" {
-  __options="$(@obj '.config' "$(@obj '.templates' "$(@obj '.glob' 'nothing/*')")")"
+  @obj at1 '.glob' 'nothing/*'
+  @obj at2 '.templates' "$at1"
+  @obj __options '.config' "$at2"
 
   run lint__checks__templates__declares_inputs__run "$__options" "$NO_INPUTS"
   assert_success

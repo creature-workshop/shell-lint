@@ -10,11 +10,16 @@ setup() {
   assert_success
   __own="$(find "$SHELL_LINT_DIR/shell/lint/checks" -name '*.check.op.sh' | wc -l)"
   __shellops="$(find "$SHELLOPS_DIR/lib" -name '*.check.op.sh' | grep -vc '/lib/lint/')"
-  assert_equal "$(@len "$output")" "$((__own + __shellops))"
-  assert_equal "$(@get "$output" '.[0]')" adr-citations
-  assert_equal "$(@get "$output" '.[1]')" adr-number-is-unique
-  assert_equal "$(@get "$output" '.[2]')" adr-number-width
-  assert_equal "$(@get "$output" '.[-1]')" string-tests
+  @len at1 "$output"
+  assert_equal "$at1" "$((__own + __shellops))"
+  @get at2 "$output" '.[0]'
+  assert_equal "$at2" adr-citations
+  @get at3 "$output" '.[1]'
+  assert_equal "$at3" adr-number-is-unique
+  @get at4 "$output" '.[2]'
+  assert_equal "$at4" adr-number-width
+  @get at5 "$output" '.[-1]'
+  assert_equal "$at5" string-tests
 }
 
 @test "lint__load_checks: a plugin under a root with a space in its path loads and registers" {
@@ -29,7 +34,8 @@ setup() {
 
 @test "every registered check answers each contract role" {
   __missing=""
-  for __name in $(@join "$(lint__registry__names)" ' '); do
+  @join at6 "$(lint__registry__names)" ' '
+  for __name in $at6; do
     for __role in run languages scopes summary hint; do
       command -v "$(lint__check_fn "$__name" "$__role")" > /dev/null 2>&1 \
         || __missing="$__missing $__name:$__role"
@@ -55,23 +61,33 @@ setup() {
 }
 
 @test "lint__unknown_checks: the names no check answers to" {
-  run lint__unknown_checks "$(@arr indent bogus awk-style nope)"
-  assert_equal "$(@len "$output")" 2
-  assert_equal "$(@get "$output" '.[0]')" "bogus"
-  assert_equal "$(@get "$output" '.[1]')" "nope"
+  @arr at7 indent bogus awk-style nope
+  run lint__unknown_checks "$at7"
+  @len at8 "$output"
+  assert_equal "$at8" 2
+  @get at9 "$output" '.[0]'
+  assert_equal "$at9" "bogus"
+  @get at10 "$output" '.[1]'
+  assert_equal "$at10" "nope"
 
-  run lint__unknown_checks "$(@arr indent)"
-  assert_equal "$(@len "$output")" 0
+  @arr at11 indent
+  run lint__unknown_checks "$at11"
+  @len at12 "$output"
+  assert_equal "$at12" 0
 }
 
 @test "role readers: languages, scopes, summary and hint come from the check's roles" {
   run lint__check_languages banner-comment
-  assert_equal "$(@len "$output")" 3
-  assert_equal "$(@get "$output" '.[1]')" awk
+  @len at13 "$output"
+  assert_equal "$at13" 3
+  @get at14 "$output" '.[1]'
+  assert_equal "$at14" awk
 
   run lint__check_scopes banner-comment
-  assert_equal "$(@len "$output")" 2
-  assert_equal "$(@get "$output" '.[1]')" tests
+  @len at15 "$output"
+  assert_equal "$at15" 2
+  @get at16 "$output" '.[1]'
+  assert_equal "$at16" tests
 
   run lint__check_scopes raw-jq
   assert_output '["code"]'
@@ -84,7 +100,8 @@ setup() {
 }
 
 @test "lint__check_language_words, lint__check_scope_words: the words registration kept, space-separated, and nothing for a stranger" {
-  assert_equal "$(lint__check_language_words banner-comment)" "$(@join "$(lint__check_languages banner-comment)" ' ')"
+  @join at17 "$(lint__check_languages banner-comment)" ' '
+  assert_equal "$(lint__check_language_words banner-comment)" "$at17"
   assert_equal "$(lint__check_scope_words indent)" "code tests"
   assert_equal "$(lint__check_scope_words raw-jq)" "code"
   assert_equal "$(lint__check_language_words bogus)" ""
@@ -94,8 +111,8 @@ setup() {
   counted_run() { :; }
   counted_summary() { printf 'Counted.\n'; }
   counted_hint() { printf 'Count it.\n'; }
-  counted_languages() { printf '%s\n' "$BATS_TEST_TMPDIR/counted" >> "$BATS_TEST_TMPDIR/reads"; @arr shell awk; }
-  counted_scopes() { @arr tests; }
+  counted_languages() { printf '%s\n' "$BATS_TEST_TMPDIR/counted" >> "$BATS_TEST_TMPDIR/reads"; @arr __counted_languages__out shell awk; println "$__counted_languages__out"; }
+  counted_scopes() { @arr __counted_scopes__out tests; println "$__counted_scopes__out"; }
 
   lint__register_check counted
   lint__check_language_words counted >/dev/null
@@ -127,7 +144,8 @@ setup() {
   __f="$BATS_TEST_TMPDIR/tabbed.sh"
   printf '#!/bin/sh\n\tx=1\n' > "$__f"
 
-  run lint__check_run indent "$(@obj)" "$__f"
+  @obj at18
+  run lint__check_run indent "$at18" "$__f"
   assert_failure
   assert_output --partial "tabbed.sh:2:"
 }
@@ -135,13 +153,14 @@ setup() {
 @test "lint__describe_checks: one line per check with its languages, scopes and rule" {
   run lint__describe_checks
   assert_success
-  assert_equal "${#lines[@]}" "$(@len "$(lint__registry__names)")"
+  @len at19 "$(lint__registry__names)"
+  assert_equal "${#lines[@]}" "$at19"
   assert_line --regexp '^indent +shell +code, tests +Leading whitespace'
   assert_line --regexp '^raw-jq +shell +code +No raw jq'
 }
 
 @test "lint__register_check: refuses a check missing a role, naming it" {
-  demo_languages() { @arr shell; }
+  demo_languages() { @arr __demo_languages__out shell; println "$__demo_languages__out"; }
   demo_summary() { printf 'A demo.\n'; }
 
   run lint__register_check demo
@@ -156,8 +175,8 @@ setup() {
   odd_run() { :; }
   odd_summary() { printf 'Odd.\n'; }
   odd_hint() { printf 'Be even.\n'; }
-  odd_languages() { @arr shell perl; }
-  odd_scopes() { @arr code prod; }
+  odd_languages() { @arr __odd_languages__out shell perl; println "$__odd_languages__out"; }
+  odd_scopes() { @arr __odd_scopes__out code prod; println "$__odd_scopes__out"; }
 
   run lint__register_check odd
   assert_failure
@@ -171,18 +190,19 @@ setup() {
   @check.demo-load() {
     @summary() { printf 'A demo.\n'; }
     @hint() { printf 'Demo it.\n'; }
-    @languages() { @arr awk; }
-    @scopes() { @arr code; }
+    @languages() { @arr __languages__out awk; println "$__languages__out"; }
+    @scopes() { @arr __scopes__out code; println "$__scopes__out"; }
     @run() { :; }
   }
-  __before="$(@len "$(lint__registry__names)")"
+  @len __before "$(lint__registry__names)"
 
   lint__load_check demo-load
   lint__load_check demo-load
 
   run lint__check_registered demo-load
   assert_output true
-  assert_equal "$(@len "$(lint__registry__names)")" "$((__before + 1))"
+  @len at20 "$(lint__registry__names)"
+  assert_equal "$at20" "$((__before + 1))"
   run demo_load_languages
   assert_output '["awk"]'
 }
@@ -196,13 +216,14 @@ setup() {
   @check.demo-check() {
     @summary() { printf 'A demo.\n'; }
     @hint() { printf 'Demo it.\n'; }
-    @languages() { @arr jq; }
-    @scopes() { @arr code; }
+    @languages() { @arr __languages__out jq; println "$__languages__out"; }
+    @scopes() { @arr __scopes__out code; println "$__scopes__out"; }
     @run() { printf 'ran %s\n' "$#"; }
   }
   interpreter__load_check demo-check @check.demo-check
 
-  run demo_check_run "$(@obj)" a b
+  @obj at21
+  run demo_check_run "$at21" a b
   assert_output "ran 3"
   run demo_check_languages
   assert_output '["jq"]'
