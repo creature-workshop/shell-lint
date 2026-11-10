@@ -161,6 +161,7 @@ __lint__config__silt() {
 : <<'FUN'
 Prints the lint settings in the JSON file <path> as a struct, checked
 against lint.schema.json, or an empty object when the file does not exist.
+Fails, saying why, when the file does not parse or breaks the schema.
 
 Usage: __lint__config__load_json <path>
 FUN
@@ -171,7 +172,7 @@ __lint__config__load_json() {
     return 0
   fi
 
-  @load __lint__config__load_json__out "$1" "$__lint__config__SCHEMA"
+  @load __lint__config__load_json__out "$1" "$__lint__config__SCHEMA" || return 1
   println "$__lint__config__load_json__out"
 }
 

@@ -90,7 +90,10 @@ setup() {
   assert_equal "$at16" tests
 
   run lint__check_scopes raw-jq
-  assert_output '["code"]'
+  @len at22 "$output"
+  assert_equal "$at22" 1
+  @get at23 "$output" '.[0]'
+  assert_equal "$at23" code
 
   run lint__check_summary indent
   assert_output --partial "multiple of the configured width"
@@ -204,7 +207,10 @@ setup() {
   @len at20 "$(lint__registry__names)"
   assert_equal "$at20" "$((__before + 1))"
   run demo_load_languages
-  assert_output '["awk"]'
+  @len at24 "$output"
+  assert_equal "$at24" 1
+  @get at25 "$output" '.[0]'
+  assert_equal "$at25" awk
 }
 
 @test "lint__check_name_of: the filename without its directory and suffix" {
@@ -226,7 +232,10 @@ setup() {
   run demo_check_run "$at21" a b
   assert_output "ran 3"
   run demo_check_languages
-  assert_output '["jq"]'
+  @len at26 "$output"
+  assert_equal "$at26" 1
+  @get at27 "$output" '.[0]'
+  assert_equal "$at27" jq
 
   @check.gappy() {
     @run() { :; }
