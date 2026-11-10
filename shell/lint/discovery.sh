@@ -14,7 +14,8 @@ scope and path (see classify.sh). Each check then takes the lines whose
 language and scope it reads. Building the listing once means every file is
 classified once, and every check agrees on what each file is.
 
-With no files named, the listing is the git index under PROJ. The index rather
+With no files named, the listing is the git index under PROJ, or under
+--added-since the files the branch changed. The index rather
 than a directory walk, because an ignored checkout inside the tree -- a
 worktree, a vendored copy, a coverage run -- is not this repository's code,
 and findings against it are findings nobody here can fix. With files named,
@@ -50,6 +51,20 @@ Usage: lint__discover_tracked <config>
 PUB_FUN
 lint__discover_tracked() {
   git__tracked_files "$PROJ" \
+    | __lint__discovery__classify_tracked \
+      "$(__lint__discovery__exclude_lines "$1")" \
+      "$(__lint__discovery__test_tree_lines "$1")"
+}
+
+: <<'PUB_FUN'
+Prints the listing of every file under PROJ that the commits on HEAD changed
+since HEAD forked from <ref>, as absolute paths, leaving out <config>'s
+exclude directories and the files those commits deleted.
+
+Usage: lint__discover_changed <config> <ref>
+PUB_FUN
+lint__discover_changed() {
+  git__diff_name_only "$2" HEAD \
     | __lint__discovery__classify_tracked \
       "$(__lint__discovery__exclude_lines "$1")" \
       "$(__lint__discovery__test_tree_lines "$1")"

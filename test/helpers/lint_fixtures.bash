@@ -54,3 +54,36 @@ stage_over_baseline() {
   printf '%s\n' "$4" > "$1/$2"
   git -C "$1" add "$2"
 }
+
+: <<'DOC'
+Stands up a git repository at <repo> with two commits. The first holds
+every file already under <repo>, and <file> with <baseline> content. The
+second holds <file> with <head> content. A scanner that reads the commits
+since the first therefore sees exactly the lines the second added. Sets
+COMMITTED_FILE to <file> and BASE_COMMIT to the first commit. The caller
+points PROJ at <repo> when the scanner reads it from there.
+
+Call this as a plain command, never inside $(...): the two variables have
+to land in the caller's shell.
+
+Usage: commit_over_baseline <repo> <file> <baseline> <head>
+DOC
+commit_over_baseline() {
+  # shellcheck disable=SC2034  # read by the suite that loaded this helper
+  COMMITTED_FILE="$2"
+
+  mkdir -p "$1/$(dirname "$2")"
+  git -C "$1" init --quiet
+  git -C "$1" config user.email lint@example.com
+  git -C "$1" config user.name Lint
+
+  printf '%s\n' "$3" > "$1/$2"
+  git -C "$1" add -A
+  git -C "$1" commit --quiet -m baseline
+  # shellcheck disable=SC2034  # read by the suite that loaded this helper
+  BASE_COMMIT="$(git -C "$1" rev-parse HEAD)"
+
+  printf '%s\n' "$4" > "$1/$2"
+  git -C "$1" add -A
+  git -C "$1" commit --quiet -m head
+}
