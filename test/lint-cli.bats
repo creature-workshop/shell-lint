@@ -38,7 +38,9 @@ FIX
 )"
   __listing="$(PROJ="$PROJ_DIR" lint__select_named '{}' "$__f")"
 
-  run lint__run "$(@obj '.added_only' false '.config' '{}')" "$(@arr)" "$__listing"
+  @obj at1 '.added_only' false '.config' '{}'
+  @arr at2
+  run lint__run "$at1" "$at2" "$__listing"
   assert_failure
   assert_output --partial "Comment prose describes what the code does now"
   assert_output --partial "A doc block carries no TODO"
@@ -59,7 +61,9 @@ FIX
 )"
   __listing="$(PROJ="$PROJ_DIR" lint__select_named '{}' "$__f")"
 
-  run lint__run "$(@obj '.added_only' false '.config' '{}')" "$(@arr backward-reference)" "$__listing"
+  @obj at3 '.added_only' false '.config' '{}'
+  @arr at4 backward-reference
+  run lint__run "$at3" "$at4" "$__listing"
   assert_failure
   assert_output --partial "Comment prose describes what the code does now"
   refute_output --partial "A doc block carries no TODO"
@@ -74,7 +78,9 @@ FIX
 )"
   __listing="$(PROJ="$PROJ_DIR" lint__select_named '{}' "$__f")"
 
-  run lint__run "$(@obj '.added_only' false '.config' '{"added_only":["raw-jq"]}')" "$(@arr)" "$__listing"
+  @obj at5 '.added_only' false '.config' '{"added_only":["raw-jq"]}'
+  @arr at6
+  run lint__run "$at5" "$at6" "$__listing"
   assert_success
   assert_output --partial "held to new lines only, per the lint declaration's added_only: raw-jq"
   refute_output --partial "Raw jq/opx"
@@ -89,12 +95,16 @@ FIX
 )"
   __listing="$(PROJ="$PROJ_DIR" lint__select_named '{}' "$__f")"
 
-  run lint__run "$(@obj '.added_only' false '.config' '{"disabled":["raw-jq"]}')" "$(@arr)" "$__listing"
+  @obj at7 '.added_only' false '.config' '{"disabled":["raw-jq"]}'
+  @arr at8
+  run lint__run "$at7" "$at8" "$__listing"
   assert_success
   assert_output --partial "turned off, per the lint declaration's disabled: raw-jq"
   refute_output --partial "Raw jq/opx"
 
-  run lint__run "$(@obj '.added_only' true '.config' '{"disabled":["raw-jq"]}')" "$(@arr)" "$__listing"
+  @obj at9 '.added_only' true '.config' '{"disabled":["raw-jq"]}'
+  @arr at10
+  run lint__run "$at9" "$at10" "$__listing"
   assert_success
   assert_output --partial "turned off, per the lint declaration's disabled: raw-jq"
   refute_output --partial "Raw jq/opx"
@@ -114,7 +124,9 @@ FIX
 )"
   __listing="$(PROJ="$PROJ_DIR" lint__select_named '{}' "$__f")"
 
-  run lint__run "$(@obj '.added_only' false '.config' '{}')" "$(@arr)" "$__listing"
+  @obj at11 '.added_only' false '.config' '{}'
+  @arr at12
+  run lint__run "$at11" "$at12" "$__listing"
   assert_success
   assert_output ""
 }
@@ -261,6 +273,98 @@ FIX
   run lint --added-only --check empty-literals "$PROJ_DIR/lib/mod.sh"
   assert_failure
   assert_output --partial 'lib/mod.sh:3:'
+}
+
+@test "cli: --added-since reports only the lines the commits since the ref added and runs the held checks" {
+  commit_over_baseline "$PROJ_DIR" lib/mod.sh 'build() {
+  jq -r .old data.json
+}' 'build() {
+  jq -r .old data.json
+  jq -r .name data.json
+}'
+  echo '{"added_only":["raw-jq"]}' > "$PROJ_DIR/lint.json"
+
+  run lint --added-since "$BASE_COMMIT" lib/mod.sh
+  assert_failure
+  assert_output --partial 'lib/mod.sh:3:'
+  assert_output --partial "ERROR: No raw jq or opx outside the structs API"
+  refute_output --partial 'lib/mod.sh:2:'
+  refute_output --partial "held to new lines only"
+}
+
+@test "cli: --added-since accepts an absolute path to the file" {
+  commit_over_baseline "$PROJ_DIR" lib/mod.sh 'build() {
+  printf x
+}' 'build() {
+  printf x
+  extra="{}"
+}'
+
+  run lint --added-since "$BASE_COMMIT" --check empty-literals "$PROJ_DIR/lib/mod.sh"
+  assert_failure
+  assert_output --partial 'lib/mod.sh:3:'
+}
+
+@test "cli: --added-since passes when the commits since the ref added no finding" {
+  commit_over_baseline "$PROJ_DIR" lib/mod.sh 'build() {
+  jq -r .old data.json
+}' 'build() {
+  jq -r .old data.json
+  printf x
+}'
+
+  run lint --added-since "$BASE_COMMIT" --check raw-jq lib/mod.sh
+  assert_success
+  assert_output ""
+}
+
+@test "cli: --added-since with no files checks the files the commits changed and no others" {
+  mkdir -p "$PROJ_DIR/lib"
+  printf 'old() {\n  jq -r .old data.json\n}\n' > "$PROJ_DIR/lib/untouched.sh"
+  commit_over_baseline "$PROJ_DIR" lib/mod.sh 'build() {
+  printf x
+}' 'build() {
+  printf x
+  jq -r .name data.json
+}'
+
+  run lint --added-since "$BASE_COMMIT" --check raw-jq
+  assert_failure
+  assert_output --partial 'lib/mod.sh:3:'
+  refute_output --partial 'untouched.sh'
+}
+
+@test "cli: --added-since with no files passes when the commits changed no file a check reads" {
+  commit_over_baseline "$PROJ_DIR" notes.txt 'one' 'two'
+
+  run lint --added-since "$BASE_COMMIT"
+  assert_success
+  assert_output ""
+}
+
+@test "cli: --added-since refuses a ref git cannot resolve" {
+  commit_over_baseline "$PROJ_DIR" lib/mod.sh 'build() {
+  printf x
+}' 'build() {
+  printf x
+  jq -r .name data.json
+}'
+
+  run lint --added-since no-such-branch --check raw-jq lib/mod.sh
+  assert_failure
+  assert_output --partial "git cannot resolve no-such-branch"
+}
+
+@test "cli: --added-only and --added-since together are refused" {
+  commit_over_baseline "$PROJ_DIR" lib/mod.sh 'build() {
+  printf x
+}' 'build() {
+  printf y
+}'
+
+  run lint --added-only --added-since "$BASE_COMMIT" lib/mod.sh
+  assert_failure
+  assert_output --partial "added-only or --added-since, not both"
 }
 
 @test "cli: --added-only holds a check with no staged scanner of its own to the added lines" {

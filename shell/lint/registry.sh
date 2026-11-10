@@ -41,7 +41,8 @@ __lint__registry__CONTRACT="run languages scopes summary hint"
 __lint__registry__LANGUAGES="shell awk jq markdown yaml"
 __lint__registry__SCOPES="code tests"
 
-__lint__registry__NAMES="${__lint__registry__NAMES:-$(@arr)}"
+@arr __at1
+__lint__registry__NAMES="${__lint__registry__NAMES:-$__at1}"
 
 # CONST: The same names as one space-separated string, so a membership test is a case statement and starts no process.
 __lint__registry__WORDS="${__lint__registry__WORDS:-}"
@@ -53,8 +54,8 @@ linter reads, so the listing asks here before it lists a file.
 PUB_FUN
 lint__registry__knows_language() {
   case " $__lint__registry__LANGUAGES " in
-    *" $1 "*) @true ;;
-    *) @false ;;
+    *" $1 "*) @true __lint__registry__knows_language__out; println "$__lint__registry__knows_language__out" ;;
+    *) @false __lint__registry__knows_language__out; println "$__lint__registry__knows_language__out" ;;
   esac
 }
 
@@ -124,8 +125,8 @@ lint__register_check() {
     return 1
   fi
 
-  __lint__register_check__languages="$(@join "$(lint__check_languages "$1")" ' ')"
-  __lint__register_check__scopes="$(@join "$(lint__check_scopes "$1")" ' ')"
+  @join __lint__register_check__languages "$(lint__check_languages "$1")" ' '
+  @join __lint__register_check__scopes "$(lint__check_scopes "$1")" ' '
   __lint__register_check__unknown="$(__lint__registry__unknown_words \
     "$__lint__register_check__languages" \
     "$__lint__register_check__scopes"
@@ -135,7 +136,7 @@ lint__register_check() {
     return 1
   fi
 
-  __lint__registry__NAMES="$(@push "$__lint__registry__NAMES" "$1")"
+  @push __lint__registry__NAMES "$__lint__registry__NAMES" "$1"
   __lint__registry__WORDS="${__lint__registry__WORDS:+$__lint__registry__WORDS }$1"
   __lint__registry__keep_words "$1" \
     "$__lint__register_check__languages" \
@@ -246,8 +247,8 @@ Prints true when a check named <name> is on the list, false otherwise.
 PUB_FUN
 lint__check_registered() {
   case " $__lint__registry__WORDS " in
-    *" $1 "*) @true ;;
-    *) @false ;;
+    *" $1 "*) @true __lint__check_registered__out; println "$__lint__check_registered__out" ;;
+    *) @false __lint__check_registered__out; println "$__lint__check_registered__out" ;;
   esac
 }
 
@@ -266,7 +267,9 @@ every name is a check.
     lint__unknown_checks '["indent","bogus"]'  ->  ["bogus"]
 PUB_FUN
 lint__unknown_checks() {
-  @reduce __lint__registry__collect_unknown "$1" "$(@arr)"
+  @arr __lint__unknown_checks__arr_2
+  @reduce __lint__unknown_checks__out __lint__registry__collect_unknown "$1" "$__lint__unknown_checks__arr_2"
+  println "$__lint__unknown_checks__out"
 }
 
 : <<'FUN'
@@ -274,12 +277,13 @@ lint__unknown_checks() {
 that name is on the list.
 FUN
 __lint__registry__collect_unknown() {
-  __lint__registry__collect_unknown__name="$(@unwrap "$2")"
+  @unwrap __lint__registry__collect_unknown__name "$2"
 
   if @is_true "$(lint__check_registered "$__lint__registry__collect_unknown__name")"; then
     println "$1"
   else
-    @push "$1" "$__lint__registry__collect_unknown__name"
+    @push __lint__registry__collect_unknown__out "$1" "$__lint__registry__collect_unknown__name"
+    println "$__lint__registry__collect_unknown__out"
   fi
 }
 
@@ -362,7 +366,7 @@ lint__describe_checks() {
 languages and scopes read from the words registration kept.
 FUN
 __lint__registry__describe() {
-  __lint__registry__describe__name="$(@unwrap "$1")"
+  @unwrap __lint__registry__describe__name "$1"
   printf '%-20s %-16s %-12s %s\n' \
     "$__lint__registry__describe__name" \
     "$(__lint__registry__comma_list "$(lint__check_language_words "$__lint__registry__describe__name")")" \

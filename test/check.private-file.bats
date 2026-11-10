@@ -10,7 +10,9 @@ setup() {
 
   # The fixtures under lib/ are shellops-shaped, and lib/ is a library root
   # only when the options name it, as shellops' own lint.json does.
-  SHELLOPS_ROOTS="$(@obj '.config' "$(@obj '.library_roots' "$(@arr lib interpreter)")")"
+  @arr __setup__arr_1 lib interpreter
+  @obj __setup__obj_2 '.library_roots' "$__setup__arr_1"
+  @obj SHELLOPS_ROOTS '.config' "$__setup__obj_2"
 }
 
 @test "lint__checks__shell__private_file__run: a private file named without a leading _ is a finding" {
@@ -41,14 +43,16 @@ consumer() {
 @test "lint__checks__shell__private_file__run: a consumer's module under its shell home is judged, its imports spelled from PROJ" {
   __c="$(consumer)"
 
-  PROJ="$__c" run lint__checks__shell__private_file__run "$(@obj)" \
+  @obj at3
+  PROJ="$__c" run lint__checks__shell__private_file__run "$at3" \
     "$__c/shell/demo/api.sh" \
     "$__c/shell/demo/location.sh"
 
   assert_failure
   assert_output --partial "location.sh:1: private file location.sh belongs to shell/demo; its name begins with _"
 
-  PROJ="$__c" run lint__checks__shell__private_file__run "$(@obj)" \
+  @obj at4
+  PROJ="$__c" run lint__checks__shell__private_file__run "$at4" \
     "$__c/src/demo/api.sh" \
     "$__c/src/demo/location.sh"
 

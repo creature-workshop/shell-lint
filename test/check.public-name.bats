@@ -10,7 +10,9 @@ setup() {
 
   # The fixtures under lib/ are shellops-shaped, and lib/ is a library root
   # only when the options name it, as shellops' own lint.json does.
-  SHELLOPS_ROOTS="$(@obj '.config' "$(@obj '.library_roots' "$(@arr lib interpreter)")")"
+  @arr __setup__arr_1 lib interpreter
+  @obj __setup__obj_2 '.library_roots' "$__setup__arr_1"
+  @obj SHELLOPS_ROOTS '.config' "$__setup__obj_2"
 }
 
 @test "lint__checks__shell__public_name__run: a public name that skips its module path is a finding" {
@@ -30,7 +32,8 @@ setup() {
 }
 
 @test "lint__checks__shell__public_name__run: an entrypoint carries no module path" {
-  run lint__checks__shell__public_name__run "$(@obj)" "$ROOT/cli/main.sh"
+  @obj at3
+  run lint__checks__shell__public_name__run "$at3" "$ROOT/cli/main.sh"
 
   assert_success
   assert_output ""
@@ -57,12 +60,14 @@ consumer() {
 @test "lint__checks__shell__public_name__run: a consumer's module under its shell home carries its path under that root" {
   __c="$(consumer)"
 
-  PROJ="$__c" run lint__checks__shell__public_name__run "$(@obj)" "$__c/shell/demo/short.sh"
+  @obj at4
+  PROJ="$__c" run lint__checks__shell__public_name__run "$at4" "$__c/shell/demo/short.sh"
 
   assert_failure
   assert_output --partial "short.sh:1: public name demo_attach does not begin with demo__"
 
-  PROJ="$__c" run lint__checks__shell__public_name__run "$(@obj)" "$__c/src/demo/short.sh"
+  @obj at5
+  PROJ="$__c" run lint__checks__shell__public_name__run "$at5" "$__c/src/demo/short.sh"
 
   assert_failure
   assert_output --partial "short.sh:1: public name demo_attach does not begin with demo__"
@@ -71,12 +76,16 @@ consumer() {
 @test "lint__checks__shell__public_name__run: a consumer's root lib/ is its product's, unjudged until library_roots names it" {
   __c="$(consumer)"
 
-  PROJ="$__c" run lint__checks__shell__public_name__run "$(@obj)" "$__c/lib/testing/selectors/areas/short.sh"
+  @obj at6
+  PROJ="$__c" run lint__checks__shell__public_name__run "$at6" "$__c/lib/testing/selectors/areas/short.sh"
 
   assert_success
   assert_output ""
 
-  PROJ="$__c" run lint__checks__shell__public_name__run "$(@obj '.config' "$(@obj '.library_roots' "$(@arr lib)")")" "$__c/lib/testing/selectors/areas/short.sh"
+  @arr at7 lib
+  @obj at8 '.library_roots' "$at7"
+  @obj at9 '.config' "$at8"
+  PROJ="$__c" run lint__checks__shell__public_name__run "$at9" "$__c/lib/testing/selectors/areas/short.sh"
 
   assert_failure
   assert_output --partial "short.sh:1: public name testing_selectors_areas_attach does not begin with testing__selectors__areas__"
@@ -84,7 +93,9 @@ consumer() {
 
 @test "lint__checks__shell__public_name__run: lint.json's library_roots replace the defaults, so a configured root is judged and a default one is not" {
   __c="$(consumer)"
-  __opts="$(@obj '.config' "$(@obj '.library_roots' "$(@arr tools)")")"
+  @arr at10 tools
+  @obj at11 '.library_roots' "$at10"
+  @obj __opts '.config' "$at11"
 
   PROJ="$__c" run lint__checks__shell__public_name__run "$__opts" "$__c/tools/demo/short.sh"
 

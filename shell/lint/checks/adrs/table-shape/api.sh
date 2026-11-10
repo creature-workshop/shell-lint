@@ -43,7 +43,8 @@ Usage: lint__checks__adrs__table_shape__run <opts> <files...>
 PUB_FUN
 lint__checks__adrs__table_shape__run() {
   @is_true "$(lint__checks__adrs__form__is_named "$1")" || return 0
-  __lint__checks__adrs__table_shape__run__config="$(@get "$1" '.config' "$(@obj)")"
+  @obj __lint__checks__adrs__table_shape__run__obj_1
+  @get __lint__checks__adrs__table_shape__run__config "$1" '.config' "$__lint__checks__adrs__table_shape__run__obj_1"
   __lint__checks__adrs__table_shape__run__folder="$(lint__checks__adrs__folder "$1")"
   __lint__checks__adrs__table_shape__run__words="$(
     lint__config__decisions_page_words "$__lint__checks__adrs__table_shape__run__config"

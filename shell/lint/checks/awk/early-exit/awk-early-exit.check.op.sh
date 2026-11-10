@@ -12,11 +12,13 @@ DOC
   }
 
   @languages() {
-    @arr awk
+    @arr __at_out awk
+    println "$__at_out"
   }
 
   @scopes() {
-    @arr code
+    @arr __at_out code
+    println "$__at_out"
   }
 
   @hint() {

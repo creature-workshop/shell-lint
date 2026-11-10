@@ -9,11 +9,13 @@ DOC
   }
 
   @languages() {
-    @arr jq
+    @arr __at_out jq
+    println "$__at_out"
   }
 
   @scopes() {
-    @arr code
+    @arr __at_out code
+    println "$__at_out"
   }
 
   @hint() {

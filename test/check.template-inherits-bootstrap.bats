@@ -30,7 +30,9 @@ setup() {
 }
 
 @test "lint__checks__templates__inherits_bootstrap__run: holds the base to the rule when lint.json names none" {
-  __options="$(@obj '.config' "$(@obj '.templates' "$(@obj '.glob' 'shell/lint/checks/templates/*.fixture.yml')")")"
+  @obj at1 '.glob' 'shell/lint/checks/templates/*.fixture.yml'
+  @obj at2 '.templates' "$at1"
+  @obj __options '.config' "$at2"
 
   run lint__checks__templates__inherits_bootstrap__run "$__options" "$BASE"
   assert_failure

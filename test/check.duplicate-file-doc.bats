@@ -10,7 +10,9 @@ setup() {
   # The fixtures are shellops-shaped, under lib/ and interpreter/, and those
   # are library roots only when the options name them, as shellops' own
   # lint.json does.
-  SHELLOPS_ROOTS="$(@obj '.config' "$(@obj '.library_roots' "$(@arr lib interpreter)")")"
+  @arr __setup__arr_1 lib interpreter
+  @obj __setup__obj_2 '.library_roots' "$__setup__arr_1"
+  @obj SHELLOPS_ROOTS '.config' "$__setup__obj_2"
 }
 
 @test "duplicate file doc: flags an entrypoint carrying a doc block and a USAGE" {

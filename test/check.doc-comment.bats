@@ -24,7 +24,8 @@ parse_args() {
 }
 FIX
 
-  run lint__checks__shell__doc_comment__run "$(@obj)" "$__fixture"
+  @obj at1
+  run lint__checks__shell__doc_comment__run "$at1" "$__fixture"
   assert_failure
   assert_output --partial "f.sh:1:"
   assert_output --partial "use a heredoc doc block"
@@ -40,7 +41,8 @@ FIX
 }
 FIX
 
-  run lint__checks__shell__doc_comment__run "$(@obj)" "$__fixture"
+  @obj at2
+  run lint__checks__shell__doc_comment__run "$at2" "$__fixture"
   assert_failure
   assert_output --partial "at.sh:1:"
 }
@@ -57,7 +59,8 @@ parse_args() {
 }
 FIX
 
-  run lint__checks__shell__doc_comment__run "$(@obj)" "$__fixture"
+  @obj at3
+  run lint__checks__shell__doc_comment__run "$at3" "$__fixture"
   assert_success
   assert_output ""
 }
@@ -66,7 +69,8 @@ FIX
   __fixture="$BATS_TEST_TMPDIR/one.sh"
   printf '# a one-line note\nparse_args() {\n  echo hi\n}\n' > "$__fixture"
 
-  run lint__checks__shell__doc_comment__run "$(@obj)" "$__fixture"
+  @obj at4
+  run lint__checks__shell__doc_comment__run "$at4" "$__fixture"
   assert_success
   assert_output ""
 }
@@ -81,7 +85,8 @@ main() {
 }
 FIX
 
-  run lint__checks__shell__doc_comment__run "$(@obj)" "$__fixture"
+  @obj at5
+  run lint__checks__shell__doc_comment__run "$at5" "$__fixture"
   assert_success
   assert_output ""
 }
@@ -97,7 +102,8 @@ EOF
 }
 FIX
 
-  run lint__checks__shell__doc_comment__run "$(@obj)" "$__fixture"
+  @obj at6
+  run lint__checks__shell__doc_comment__run "$at6" "$__fixture"
   assert_success
   assert_output ""
 }
@@ -113,7 +119,8 @@ parse_args() {
 }
 FIX
 
-  run lint__checks__shell__doc_comment__run "$(@obj)" "$__fixture"
+  @obj at7
+  run lint__checks__shell__doc_comment__run "$at7" "$__fixture"
   assert_success
   assert_output ""
 }
@@ -133,7 +140,8 @@ foo() {
 FIX
   git -C "$__repo" add f.sh
 
-  PROJ="$__repo" run lint__checks__shell__doc_comment__run "$(@obj '.added_only' true)" f.sh
+  @obj at8 '.added_only' true
+  PROJ="$__repo" run lint__checks__shell__doc_comment__run "$at8" f.sh
   assert_failure
   assert_output --partial "f.sh:2:"
 }
@@ -153,7 +161,8 @@ FIX
   printf 'echo more\n' >> "$__repo/f.sh"
   git -C "$__repo" add f.sh
 
-  PROJ="$__repo" run lint__checks__shell__doc_comment__run "$(@obj '.added_only' true)" f.sh
+  @obj at9 '.added_only' true
+  PROJ="$__repo" run lint__checks__shell__doc_comment__run "$at9" f.sh
   assert_success
   assert_output ""
 }

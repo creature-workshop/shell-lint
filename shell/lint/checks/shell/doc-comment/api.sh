@@ -32,7 +32,7 @@ PUB_FUN
 lint__checks__shell__doc_comment__run() {
   lint__checks__shell__doc_comment__run__opts="$1"
   shift
-  lint__checks__shell__doc_comment__run__added_only="$(@option "$lint__checks__shell__doc_comment__run__opts" 'added_only' false)"
+  @option lint__checks__shell__doc_comment__run__added_only "$lint__checks__shell__doc_comment__run__opts" 'added_only' false
 
   if @is_true "$lint__checks__shell__doc_comment__run__added_only"; then
     lint__checks__shell__doc_comment__run__hits="$(__lint__checks__shell__doc_comment__scan_each_staged "$@")"

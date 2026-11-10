@@ -11,11 +11,14 @@ setup() {
 }
 
 @test "lint__checks__templates__glob: templates/*/template.yml when lint.json names no pattern" {
-  run lint__checks__templates__glob "$(@obj)"
+  @obj at1
+  run lint__checks__templates__glob "$at1"
   assert_output "templates/*/template.yml"
 }
 
 @test "lint__checks__templates__every_push: empty when lint.json names none" {
-  run lint__checks__templates__every_push "$(@obj)"
-  assert_output "$(@arr)"
+  @obj at2
+  run lint__checks__templates__every_push "$at2"
+  @arr at3
+  assert_output "$at3"
 }

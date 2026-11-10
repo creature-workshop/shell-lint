@@ -6,7 +6,7 @@ check. It is a shellops consumer: `shell/lint` holds the engine and the
 checks, and `cli/lint` runs them over a repository.
 
     SHELLOPS_DIR=<shellops> SHELL_SCAN_DIR=<shell-scan> \
-      PROJ=<the repository> cli/lint [--list] [--check <name>]... [--added-only] [files...]
+      PROJ=<the repository> cli/lint [--list] [--check <name>]... [--added-only | --added-since <ref>] [files...]
 
 `cli/lint --help` says what a run does and what `lint.json` may set. Each
 variable is the root of that repository's copy; one left unset falls back

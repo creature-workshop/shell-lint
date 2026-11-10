@@ -6,10 +6,9 @@ setup() {
   source "$SHELL_LINT_DIR/shell/lint/checks/adrs/status/api.sh"
   source "$SHELL_LINT_DIR/shell/lint/checks/adrs/fixtures.sh"
   PROJ="$(lint__checks__adrs__fixture_repo "$BATS_TEST_TMPDIR/repo")"
-  ONE_PAGE="$(@obj \
+  @obj ONE_PAGE \
     '.config.decisions.folder' adrs \
     '.config.decisions.form' one-page
-  )"
 }
 
 @test "lint__checks__adrs__status__run: passes a record that is approved, and one that names the record that superseded it" {
@@ -32,7 +31,8 @@ setup() {
 @test "lint__checks__adrs__status__run: passes every file in a repository that names no form" {
   __record="$(lint__checks__adrs__fixture_one_page "$PROJ" adrs 000007-fragments unapproved)"
 
-  run lint__checks__adrs__status__run "$(@obj '.config.decisions.folder' adrs)" "$__record"
+  @obj at1 '.config.decisions.folder' adrs
+  run lint__checks__adrs__status__run "$at1" "$__record"
   assert_success
   assert_output ""
 }

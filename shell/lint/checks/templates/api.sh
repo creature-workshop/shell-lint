@@ -63,8 +63,9 @@ Prints the lint.json settings in <opts>, or an empty object when the run
 has none.
 FUN
 __lint__checks__templates__config() {
-  __lint__checks__templates__config__none="$(@obj)"
-  @get "$1" '.config' "$__lint__checks__templates__config__none"
+  @obj __lint__checks__templates__config__none
+  @get __lint__checks__templates__config__out "$1" '.config' "$__lint__checks__templates__config__none"
+  println "$__lint__checks__templates__config__out"
 }
 
 : <<'FUN'
@@ -85,10 +86,12 @@ __lint__checks__templates__is_template() {
   # shellcheck disable=SC2254 # the pattern is the point: it must glob, unquoted.
   case "$(__lint__checks__templates__key "$1")" in
     $2)
-      @succeeds [ -f "$1" ]
+      @succeeds __lint__checks__templates__is_template__out [ -f "$1" ]
+      println "$__lint__checks__templates__is_template__out"
       ;;
     *)
-      @false
+      @false __lint__checks__templates__is_template__out
+      println "$__lint__checks__templates__is_template__out"
       ;;
   esac
 }
@@ -138,7 +141,7 @@ __lint__checks__templates__keep_unless_exempt() {
 
   for __lint__checks__templates__keep_unless_exempt__file in "$@"; do
     __lint__checks__templates__keep_unless_exempt__key="$(__lint__checks__templates__key "$__lint__checks__templates__keep_unless_exempt__file")"
-    if @is_false "$(@any __lint__checks__templates__key_eq "$__lint__checks__templates__keep_unless_exempt__exempt" "$__lint__checks__templates__keep_unless_exempt__key")"; then
+    if @any __lint__checks__templates__keep_unless_exempt__any_1 __lint__checks__templates__key_eq "$__lint__checks__templates__keep_unless_exempt__exempt" "$__lint__checks__templates__keep_unless_exempt__key"; @is_false "$__lint__checks__templates__keep_unless_exempt__any_1"; then
       println "$__lint__checks__templates__keep_unless_exempt__file"
     fi
   done
@@ -148,7 +151,8 @@ __lint__checks__templates__keep_unless_exempt() {
 @any predicate: succeeds when the wrapped path $1 has the relative form $2.
 FUN
 __lint__checks__templates__key_eq() {
-  [ "$(__lint__checks__templates__key "$(@unwrap "$1")")" = "$2" ]
+  @unwrap __lint__checks__templates__key_eq__unwrap_2 "$1"
+  [ "$(__lint__checks__templates__key "$__lint__checks__templates__key_eq__unwrap_2")" = "$2" ]
 }
 
 : <<'PUB_FUN'

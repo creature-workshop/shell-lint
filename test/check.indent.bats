@@ -8,7 +8,8 @@ setup() {
 }
 
 @test "lint__checks__shell__indent__run: accepts a clean fixture (exploded \$() form + heredoc prose)" {
-  run lint__checks__shell__indent__run "$(@obj)" "$CLEAN_FIXTURE"
+  @obj at1
+  run lint__checks__shell__indent__run "$at1" "$CLEAN_FIXTURE"
   assert_success
   assert_output ""
 }
@@ -25,7 +26,8 @@ collect() {
 }
 FIX
 
-  run lint__checks__shell__indent__run "$(@obj)" "$__fixture"
+  @obj at2
+  run lint__checks__shell__indent__run "$at2" "$__fixture"
   assert_success
   assert_output ""
 }
@@ -41,7 +43,8 @@ EOF
 }
 FIX
 
-  run lint__checks__shell__indent__run "$(@obj)" "$__fixture"
+  @obj at3
+  run lint__checks__shell__indent__run "$at3" "$__fixture"
   assert_success
   assert_output ""
 }
@@ -50,7 +53,8 @@ FIX
   __fixture="$BATS_TEST_TMPDIR/tabbed.sh"
   printf 'main() {\n\techo hi\n}\n' > "$__fixture"
 
-  run lint__checks__shell__indent__run "$(@obj)" "$__fixture"
+  @obj at4
+  run lint__checks__shell__indent__run "$at4" "$__fixture"
   assert_failure
   assert_output --partial "tab in indentation"
 }
@@ -59,7 +63,8 @@ FIX
   __fixture="$BATS_TEST_TMPDIR/odd.sh"
   printf 'main() {\n   echo hi\n}\n' > "$__fixture"
 
-  run lint__checks__shell__indent__run "$(@obj)" "$__fixture"
+  @obj at5
+  run lint__checks__shell__indent__run "$at5" "$__fixture"
   assert_failure
   assert_output --partial "not a multiple of 2"
 }
@@ -68,7 +73,8 @@ FIX
   __fixture="$BATS_TEST_TMPDIR/trailing.sh"
   printf 'echo hi \n' > "$__fixture"
 
-  run lint__checks__shell__indent__run "$(@obj)" "$__fixture"
+  @obj at6
+  run lint__checks__shell__indent__run "$at6" "$__fixture"
   assert_failure
   assert_output --partial "trailing whitespace"
 }
@@ -77,7 +83,8 @@ FIX
   __fixture="$BATS_TEST_TMPDIR/anchored.sh"
   printf 'a=1\n   b=2\n' > "$__fixture"
 
-  run lint__checks__shell__indent__run "$(@obj)" "$__fixture"
+  @obj at7
+  run lint__checks__shell__indent__run "$at7" "$__fixture"
   assert_failure
   assert_output --partial "anchored.sh:2:"
 }
@@ -86,7 +93,8 @@ FIX
   __fixture="$BATS_TEST_TMPDIR/width.sh"
   printf 'main() {\n  echo hi\n}\n' > "$__fixture"
 
-  run lint__checks__shell__indent__run "$(@obj '.config.indent.width' 4)" "$__fixture"
+  @obj at8 '.config.indent.width' 4
+  run lint__checks__shell__indent__run "$at8" "$__fixture"
   assert_failure
   assert_output --partial "not a multiple of 4"
 }
@@ -95,7 +103,8 @@ FIX
   __fixture="$BATS_TEST_TMPDIR/tabs-ok.sh"
   printf 'main() {\n\techo hi\n}\n' > "$__fixture"
 
-  run lint__checks__shell__indent__run "$(@obj '.config.indent.tabs' true)" "$__fixture"
+  @obj at9 '.config.indent.tabs' true
+  run lint__checks__shell__indent__run "$at9" "$__fixture"
   assert_success
   assert_output ""
 }
@@ -106,7 +115,8 @@ FIX
   printf 'main() {\n   echo one\n}\n' > "$__one"
   printf 'main() {\n  echo ok\n     echo two\n}\n' > "$__two"
 
-  run lint__checks__shell__indent__run "$(@obj)" "$__one" "$BATS_TEST_TMPDIR/missing.sh" "$__two"
+  @obj at10
+  run lint__checks__shell__indent__run "$at10" "$__one" "$BATS_TEST_TMPDIR/missing.sh" "$__two"
   assert_failure
   assert_output --partial "one.sh:2:"
   assert_output --partial "two.sh:3:"
