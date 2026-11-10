@@ -5,7 +5,16 @@ SHELL_LINT_DIR="${SHELL_LINT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pw
 export SHELL_LINT_DIR
 export SHELLOPS_DIR="${SHELLOPS_DIR:-$SHELL_LINT_DIR/shell/.ops}"
 export SHELL_SCAN_DIR="${SHELL_SCAN_DIR:-$SHELL_LINT_DIR/shell/.scan}"
+
+# CONST: The tree this command runs. shellops' .envrc exports SHELL_LINT_DIR again, as the shell-lint its own lock pins.
+LINT_DIR="$SHELL_LINT_DIR"
+
+# CONST: The scanner this run was given. shellops' .envrc exports SHELL_SCAN_DIR again, as the shell-scan its own lock pins.
+SCAN_DIR="$SHELL_SCAN_DIR"
+
 . "$SHELLOPS_DIR/.envrc"
+export SHELL_LINT_DIR="$LINT_DIR"
+export SHELL_SCAN_DIR="$SCAN_DIR"
 
 import \
   "$SHELLOPS_DIR/lib/args/api.sh" \

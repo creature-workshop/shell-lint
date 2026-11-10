@@ -5,6 +5,10 @@ setup() {
   source "$SHELL_LINT_DIR/shell/lint/config.sh"
 }
 
+@test "setup: the suites read the lint from this checkout, not from the copy shellops pins" {
+  assert_equal "$SHELL_LINT_DIR" "$(cd "$BATS_TEST_DIRNAME/.." && pwd)"
+}
+
 @test "lint__config__load: reads and validates this repository's lint.json" {
   run lint__config__load "$SHELL_LINT_DIR/lint.json"
   assert_success
