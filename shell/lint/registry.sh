@@ -267,24 +267,8 @@ every name is a check.
     lint__unknown_checks '["indent","bogus"]'  ->  ["bogus"]
 PUB_FUN
 lint__unknown_checks() {
-  @arr __lint__unknown_checks__arr_2
-  @reduce __lint__unknown_checks__out __lint__registry__collect_unknown "$1" "$__lint__unknown_checks__arr_2"
+  @difference __lint__unknown_checks__out "$1" "$__lint__registry__NAMES"
   println "$__lint__unknown_checks__out"
-}
-
-: <<'FUN'
-@reduce callback: adds the wrapped <name> to the accumulator unless a check by
-that name is on the list.
-FUN
-__lint__registry__collect_unknown() {
-  @unwrap __lint__registry__collect_unknown__name "$2"
-
-  if @is_true "$(lint__check_registered "$__lint__registry__collect_unknown__name")"; then
-    println "$1"
-  else
-    @push __lint__registry__collect_unknown__out "$1" "$__lint__registry__collect_unknown__name"
-    println "$__lint__registry__collect_unknown__out"
-  fi
 }
 
 : <<'PUB_FUN'
